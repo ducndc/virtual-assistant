@@ -1,0 +1,10 @@
+{
+  "C_Cpp.errorSquiggles": "disabled",
+  "files.associations": {
+    "iomanip": "c",
+    "assistant_utils.h": "c",
+    "ostream": "c",
+    "iostream": "cpp",
+    "string_view": "cpp"
+  }
+}
