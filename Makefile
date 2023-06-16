@@ -6,4 +6,4 @@ assistant : $(OBJS)
 
 # remove extra files
 clean :
-	rm -rf *.o	
+	rm -rf src/*.o	

@@ -48,7 +48,6 @@ void assistant_utils::LoadSetting()
 		{
 			file >> g_nameUser >> g_speedOfAssistant >> g_volumeOfAssistant >> g_pithOfAssistant >> g_tSpeedOfAssistant;
 		}
-
 	}
 	else
 	{

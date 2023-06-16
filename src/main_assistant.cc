@@ -50,7 +50,6 @@ int main()
 //-----------------------------Repeat function-------------------------//
 void Repeat()
 {
-	// system("color a");
 	system("clear");
 	LocalClock();
 	std::cout << " \n\n\nType Here  ---> ";
@@ -62,12 +61,9 @@ void Repeat()
 	l_pos = g_input.find('\0');
 	s_word = g_input.substr(pos + 1, l_pos); //rest word
 
-
-//-----------Check conditions--------------//
 	Check();
 }
 
-//----------------------------Check function---------------------------//
 void Check()
 {
 	if (m_word == "hi" || m_word == "hey" || m_word == "hello" || m_word == "hlo")
@@ -79,7 +75,6 @@ void Check()
 		if (g_input == "play" || g_input == "play " || s_word == " " || s_word == "  " || s_word == "   ")
 		{
 			Speak("Sorry " + g_userName + " ,you does not enter song name");
-			// tutorial("play");
 		}
 		else
 		{
@@ -197,22 +192,11 @@ void Check()
 	{
 		Hacking();
 	}
-
 	else if (m_word == "list")
 	{
 		if (s_word == "all songs" || s_word == "songs")
 			ShowSongLists("data/songs.txt");
 	}
-	/*else if(g_input=="unhide data"||g_input=="unhide data folder")
-	      {
-	        system("attrib -s -h data");
-	      }
-	else if(g_input=="hide data"||g_input=="hide data folder")
-	      {
-	        system("attrib +s +h data");
-	      }
-	      */
-
 	else if (m_word == "block")
 	{
 		BlockWebsite(s_word);
@@ -221,7 +205,6 @@ void Check()
 	{
 		SearchKeyWord(s_word, "youtube");
 	}
-
 	else if (m_word == "open")
 	{
 		if (s_word == "chrome" || s_word == "google chrome")
@@ -235,7 +218,6 @@ void Check()
 		else
 			OpenFile(s_word);
 	}
-
 	else
 	{
 		Speak("Sorry " + g_userName + ", unknown command...");
@@ -313,9 +295,10 @@ void PlaySong(std::string item)
 			break;
 		}
 	}
+
 	usleep(T_CONST * 150);
 	system("clear");
-	//--------------if song not found------------------
+
 	if (song != item)
 	{
 		Typing(song_name);
@@ -336,7 +319,6 @@ void PlaySong(std::string item)
 	file.close();
 }
 
-//------------------------------ConvertSpaceToUnderscore std::string-------------------------//
 void ConvertSpaceToUnderscore(std::string &c)
 {
 
@@ -348,7 +330,6 @@ void ConvertSpaceToUnderscore(std::string &c)
 	}
 }
 
-//------------------------------update the song list-------------------//
 void UpdateSong(std::string name)
 {
 	std::fstream a, b;
@@ -364,14 +345,11 @@ void UpdateSong(std::string name)
 	a.close();
 }
 
-//------------------------timer function--------------
-
-// function to display the timer
-void displayClock(int seconds)
+void DisplayClock(int seconds)
 {
 	int h, m;
 	h = m = 0;
-	// system call to clear the screen
+
 	system("clear");
 	std::cout << "\n\n";
 	std::cout << std::setfill(' ') << std::setw(75) << "	        TIMER	      	\n";
@@ -387,13 +365,11 @@ void ShutdownTimer(int t)
 {
 	while (t)
 	{
-		displayClock(t);
+		DisplayClock(t);
 		usleep(T_CONST * 900);
 		t--;
 	}
 }
-
-//----------------online SearchKeyWord and also 0download songs----------------
 
 void SearchKeyWord(std::string query, std::string extra)
 {
@@ -407,6 +383,7 @@ void SearchKeyWord(std::string query, std::string extra)
 	system("clear");
 	CreateNewLine();
 	Typing("Cheking internet connection...");
+
 	if (s_count % 5 == 0)
 	{
 		CreateNewLine();
@@ -444,8 +421,6 @@ void SearchKeyWord(std::string query, std::string extra)
 		url += query;
 		system(std::string(url).c_str());
 
-		//only for hindi and punjabi songs
-
 		url = "xdg-open https://www.google.com/search?q=";
 		url += query;
 		url += "+djpunjab";
@@ -460,7 +435,6 @@ void SearchKeyWord(std::string query, std::string extra)
 	}
 	else if (extra == "movie")
 	{
-
 		url = "xdg-open https://www.google.com/search?q=";
 		url += query;
 		url += "+-inurl%3A(htm%7Chtml%7Cphp%7Cpls%7Ctxt)+intitle%3Aindeof+%22last+modified%22(mp4%7Cmkv%7Cwma%7Caac%7Cavi)";
@@ -475,13 +449,12 @@ void SearchKeyWord(std::string query, std::string extra)
 
 	s_count++;
 }
-//-----------------newline function----------------
+
 void CreateNewLine()
 {
 	std::cout << "\n";
 }
 
-//----------------Install files---------------------
 void Install(std::string fold)
 {
 	std::fstream file;
@@ -490,7 +463,6 @@ void Install(std::string fold)
 
 	foldname += fold;
 	system(std::string(foldname).c_str());
-
 	filename = "My_beat/";
 	filename += fold;
 	filename += "/list.txt";
@@ -498,32 +470,34 @@ void Install(std::string fold)
 	file.close();
 }
 
-//---------------list the file texts------------------
 void ShowSongLists(std::string link)
 {
 	std::fstream file;
 	int g_count = 0;
 	char word[50], old[50];
 	file.open(link);
+
 	while (file >> word >> old)
 	{
 		g_count++;
 		std::cout << word << "\n";
 	}
+
 	std::cout << "\n\t\tTotal songs available :" << g_count << std::endl;
 	std::string p, s = "Only ";
 	p = g_count;
 	s += p;
 	s += "songs are available";
+
 	if (g_count != 0)
 	{
 		Speak(s);
 	}
+
 	file.close();
 	system("pause");
 }
 
-//----------------------Hacking zone------------------
 void Hacking()
 {
 	system("clear");
@@ -570,7 +544,6 @@ void OpenFile(std::string location)
 	system(std::string(path).c_str());
 }
 
-//----------------------help file---------------------
 void Help()
 {
 	g_count = 0;
