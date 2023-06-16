@@ -1,8 +1,8 @@
-OBJS = 	main_assistant.o assistant_utils.o 
+OBJS = 	src/main_assistant.o src/assistant_utils.o 
 
 # compile code and create executable file
 assistant : $(OBJS)
-	g++ -pthread -o vitual_assistant $(OBJS) 
+	g++ -pthread -o bin/vitual_assistant $(OBJS) 
 
 # remove extra files
 clean :
