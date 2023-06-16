@@ -1,6 +1,6 @@
 /**
  * Author   : Chung Duc Nguyen Dang
- * Email    : nguyendangchungduc1999@gmail.com
+ * Email    : nguyendangchungDuc1999@gmail.com
  * 
  * assistant_utils.cpp
  */
@@ -53,7 +53,7 @@ void assistant_utils::LoadSetting()
 	{
 		g_nameUser = "Duc";
 		g_speedOfAssistant = 160;
-		g_pithOfAssistant = 40;
+		g_pithOfAssistant = 80;
 		g_volumeOfAssistant = 100;
 		g_tSpeedOfAssistant = 40;
 	}
@@ -97,7 +97,6 @@ void assistant_utils::Speak(std::string s)
 
 void assistant_utils::Typing(std::string t)
 {
-
 	std::thread th(assistant_utils::Speak, t); //using std::thread for TTS
 
 	for (int i = 0; t[i] != '\0'; i++)
