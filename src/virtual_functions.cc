@@ -7,14 +7,16 @@
 
 #include "virtual_functions.h"
 
-std::string g_input;
+
 int pos = 0;
 int l_pos = 0;
 int g_count = 0;
+int s_count = 0;
+
+std::string g_userName;
 std::string m_word;
 std::string s_word;
-int s_count = 0;
-std::string g_userName;
+std::string g_input;
 
 void Repeat()
 {
@@ -22,25 +24,25 @@ void Repeat()
 	LocalClock();
 	std::cout << " \n\n\nType Here  ---> ";
 	std::cin.clear();
-	getline(std::cin, g_input);  // get command from user
+	getline(std::cin, g_input);  /*get command from user*/
 
 	pos = g_input.find(" ");
-	m_word = g_input.substr(0, pos); //main command word
+	m_word = g_input.substr(0, pos); /*main command word*/
 	l_pos = g_input.find('\0');
-	s_word = g_input.substr(pos + 1, l_pos); //rest word
+	s_word = g_input.substr(pos + 1, l_pos); /*rest word*/
 
 	Check();
 }
 
 void Check()
 {
-	if (m_word == "hi" || m_word == "hey" || m_word == "hello" || m_word == "hlo")
+	if (("hi" == m_word) || ("hey" == m_word) || ("hello" == m_word) || ("hlo" == m_word))
 	{
 		Typing("Hi " + g_userName + ", how can I help you..");
 	}
-	else if (m_word == "play")
+	else if ("play" == m_word)
 	{
-		if (g_input == "play" || g_input == "play " || s_word == " " || s_word == "  " || s_word == "   ")
+		if (("play" == g_input) || ("play " == g_input) || (" " == s_word) || ("  " == s_word) || ("   " == s_word))
 		{
 			Speak("Sorry " + g_userName + " ,you does not enter song name");
 		}
@@ -49,8 +51,7 @@ void Check()
 			PlaySong(s_word);
 		}
 	}
-
-	else if (m_word == "update" || m_word == "updating")
+	else if (("update" == m_word) || ("updating" == m_word))
 	{
 		system("clear");
 		CreateNewLine();
@@ -92,9 +93,9 @@ void Check()
 		ShutdownTimer(5);
 		Speak("Now , I am going to sleep");
 		if (m_word == "shutdown")
-			system("shutdown /s");
+			system("shutdown");
 		else
-			system("shutdown /r");
+			system("reboot");
 		usleep(T_CONST * 10);
 		exit(1);
 	}
@@ -103,14 +104,14 @@ void Check()
 	{
 		if (g_input == "what is your name")
 		{
-			Typing("My name is hydron.");
+			Typing("My name is VA.");
 		}
 		else if (g_input == "who are you" || g_input == "who created you" || g_input == "who made you")
 		{
-			Typing("I am Hydron, a virtual assistant");
+			Typing("I am VA, a virtual assistant");
 			usleep(T_CONST * 300);
 			CreateNewLine();
-			Typing("I was created on 27 December ,2018");
+			Typing("I was created on 16 June ,2023");
 			usleep(T_CONST * 300);
 		}
 		else
@@ -198,8 +199,6 @@ void Check()
 			usleep(T_CONST * 600);
 			Speak("You need some help...");
 			Help();
-			//Typing("do you want some tutorial(y/n)");
-			//if yes then tutorial();
 		}
 	}
 
