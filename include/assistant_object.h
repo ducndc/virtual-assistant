@@ -48,7 +48,7 @@ public:
     void Init();
 
     /**
-     * Load paramaters form file
+     * @brief Load paramaters form file
      * 
      * @param:
      * @return

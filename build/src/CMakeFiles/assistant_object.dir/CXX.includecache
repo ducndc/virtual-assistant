@@ -6,3 +6,33 @@
 
 #IncludeRegexTransform: 
 
+../include/assistant_object.h
+iostream
+-
+fstream
+-
+cstdlib
+-
+iomanip
+-
+stdio.h
+-
+cstring
+-
+unistd.h
+-
+ctype.h
+-
+ctime
+-
+thread
+-
+
+../include/parameter.h
+
+/home/ducndc/workspaces/chat_bot/src/assistant_object.cc
+assistant_object.h
+/home/ducndc/workspaces/chat_bot/src/assistant_object.h
+parameter.h
+/home/ducndc/workspaces/chat_bot/src/parameter.h
+

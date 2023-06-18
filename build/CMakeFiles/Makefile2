@@ -53,18 +53,21 @@ CMAKE_BINARY_DIR = /home/ducndc/workspaces/chat_bot/build
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
+all: docs/all
 all: src/all
 all: apps/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
+preinstall: docs/preinstall
 preinstall: src/preinstall
 preinstall: apps/preinstall
 
 .PHONY : preinstall
 
 # The main recursive "clean" target.
+clean: docs/clean
 clean: src/clean
 clean: apps/clean
 
@@ -89,6 +92,24 @@ apps/clean: apps/CMakeFiles/virtual_assistant.dir/clean
 .PHONY : apps/clean
 
 #=============================================================================
+# Directory level rules for directory docs
+
+# Recursive "all" directory target.
+docs/all:
+
+.PHONY : docs/all
+
+# Recursive "preinstall" directory target.
+docs/preinstall:
+
+.PHONY : docs/preinstall
+
+# Recursive "clean" directory target.
+docs/clean: docs/CMakeFiles/docs.dir/clean
+	$(CMAKE_COMMAND) -P docs/CMakeFiles/cmake_directory_clean.cmake
+.PHONY : docs/clean
+
+#=============================================================================
 # Directory level rules for directory src
 
 # Recursive "all" directory target.
@@ -105,6 +126,33 @@ src/preinstall:
 src/clean: src/CMakeFiles/assistant_object.dir/clean
 
 .PHONY : src/clean
+
+#=============================================================================
+# Target rules for target docs/CMakeFiles/docs.dir
+
+# All Build rule for target.
+docs/CMakeFiles/docs.dir/all:
+	$(MAKE) -f docs/CMakeFiles/docs.dir/build.make docs/CMakeFiles/docs.dir/depend
+	$(MAKE) -f docs/CMakeFiles/docs.dir/build.make docs/CMakeFiles/docs.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ducndc/workspaces/chat_bot/build/CMakeFiles --progress-num=3 "Built target docs"
+.PHONY : docs/CMakeFiles/docs.dir/all
+
+# Build rule for subdir invocation for target.
+docs/CMakeFiles/docs.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ducndc/workspaces/chat_bot/build/CMakeFiles 1
+	$(MAKE) -f CMakeFiles/Makefile2 docs/CMakeFiles/docs.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/ducndc/workspaces/chat_bot/build/CMakeFiles 0
+.PHONY : docs/CMakeFiles/docs.dir/rule
+
+# Convenience name for target.
+docs: docs/CMakeFiles/docs.dir/rule
+
+.PHONY : docs
+
+# clean rule for target.
+docs/CMakeFiles/docs.dir/clean:
+	$(MAKE) -f docs/CMakeFiles/docs.dir/build.make docs/CMakeFiles/docs.dir/clean
+.PHONY : docs/CMakeFiles/docs.dir/clean
 
 #=============================================================================
 # Target rules for target src/CMakeFiles/assistant_object.dir
@@ -140,7 +188,7 @@ src/CMakeFiles/assistant_object.dir/clean:
 apps/CMakeFiles/virtual_assistant.dir/all: src/CMakeFiles/assistant_object.dir/all
 	$(MAKE) -f apps/CMakeFiles/virtual_assistant.dir/build.make apps/CMakeFiles/virtual_assistant.dir/depend
 	$(MAKE) -f apps/CMakeFiles/virtual_assistant.dir/build.make apps/CMakeFiles/virtual_assistant.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ducndc/workspaces/chat_bot/build/CMakeFiles --progress-num=3,4 "Built target virtual_assistant"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/ducndc/workspaces/chat_bot/build/CMakeFiles --progress-num=4,5 "Built target virtual_assistant"
 .PHONY : apps/CMakeFiles/virtual_assistant.dir/all
 
 # Build rule for subdir invocation for target.

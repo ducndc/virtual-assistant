@@ -80,14 +80,14 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/ducndc/workspaces/chat_bot/build/CMakeFiles /home/ducndc/workspaces/chat_bot/build/CMakeFiles/progress.marks
-	$(MAKE) -f CMakeFiles/Makefile2 all
+	cd /home/ducndc/workspaces/chat_bot/build && $(CMAKE_COMMAND) -E cmake_progress_start /home/ducndc/workspaces/chat_bot/build/CMakeFiles /home/ducndc/workspaces/chat_bot/build/docs/CMakeFiles/progress.marks
+	cd /home/ducndc/workspaces/chat_bot/build && $(MAKE) -f CMakeFiles/Makefile2 docs/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/ducndc/workspaces/chat_bot/build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
 clean:
-	$(MAKE) -f CMakeFiles/Makefile2 clean
+	cd /home/ducndc/workspaces/chat_bot/build && $(MAKE) -f CMakeFiles/Makefile2 docs/clean
 .PHONY : clean
 
 # The main clean target
@@ -97,57 +97,33 @@ clean/fast: clean
 
 # Prepare targets for installation.
 preinstall: all
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/ducndc/workspaces/chat_bot/build && $(MAKE) -f CMakeFiles/Makefile2 docs/preinstall
 .PHONY : preinstall
 
 # Prepare targets for installation.
 preinstall/fast:
-	$(MAKE) -f CMakeFiles/Makefile2 preinstall
+	cd /home/ducndc/workspaces/chat_bot/build && $(MAKE) -f CMakeFiles/Makefile2 docs/preinstall
 .PHONY : preinstall/fast
 
 # clear depends
 depend:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
+	cd /home/ducndc/workspaces/chat_bot/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
-#=============================================================================
-# Target rules for targets named docs
+# Convenience name for target.
+docs/CMakeFiles/docs.dir/rule:
+	cd /home/ducndc/workspaces/chat_bot/build && $(MAKE) -f CMakeFiles/Makefile2 docs/CMakeFiles/docs.dir/rule
+.PHONY : docs/CMakeFiles/docs.dir/rule
 
-# Build rule for target.
-docs: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 docs
+# Convenience name for target.
+docs: docs/CMakeFiles/docs.dir/rule
+
 .PHONY : docs
 
 # fast build rule for target.
 docs/fast:
-	$(MAKE) -f docs/CMakeFiles/docs.dir/build.make docs/CMakeFiles/docs.dir/build
+	cd /home/ducndc/workspaces/chat_bot/build && $(MAKE) -f docs/CMakeFiles/docs.dir/build.make docs/CMakeFiles/docs.dir/build
 .PHONY : docs/fast
-
-#=============================================================================
-# Target rules for targets named assistant_object
-
-# Build rule for target.
-assistant_object: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 assistant_object
-.PHONY : assistant_object
-
-# fast build rule for target.
-assistant_object/fast:
-	$(MAKE) -f src/CMakeFiles/assistant_object.dir/build.make src/CMakeFiles/assistant_object.dir/build
-.PHONY : assistant_object/fast
-
-#=============================================================================
-# Target rules for targets named virtual_assistant
-
-# Build rule for target.
-virtual_assistant: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 virtual_assistant
-.PHONY : virtual_assistant
-
-# fast build rule for target.
-virtual_assistant/fast:
-	$(MAKE) -f apps/CMakeFiles/virtual_assistant.dir/build.make apps/CMakeFiles/virtual_assistant.dir/build
-.PHONY : virtual_assistant/fast
 
 # Help Target
 help:
@@ -158,8 +134,6 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... docs"
-	@echo "... assistant_object"
-	@echo "... virtual_assistant"
 .PHONY : help
 
 
@@ -171,6 +145,6 @@ help:
 # No rule that depends on this can have commands that come from listfiles
 # because they might be regenerated.
 cmake_check_build_system:
-	$(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
+	cd /home/ducndc/workspaces/chat_bot/build && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 0
 .PHONY : cmake_check_build_system
 
