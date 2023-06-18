@@ -9,6 +9,6 @@
 #define PARAMATER_H
 
 #define T_CONST 1000
-#define VERSION "ASSISTANT VERTION 1"
+#define VERSION " ASSISTANT VERTION 1 "
 
 #endif /* PARAMATER_H */

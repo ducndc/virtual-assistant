@@ -122,7 +122,7 @@ void AssistantObject::LocalClock()
         }
     }
 
-	std::cout << "   " << month[l_time->tm_mon];
+	std::cout << month[l_time->tm_mon];
 	std::cout << " " << l_time->tm_mday << day_no[l_time->tm_mday % 10];
 	std::cout << " " << l_time->tm_year + 1900 ;
 
@@ -138,9 +138,9 @@ void AssistantObject::LocalClock()
 	m_greet += " ";
 	m_greet += m_userName;
     
-	std::cout << "\t\t\t\t\t";
+	std::cout << "\n";
 	std::cout << m_greet;
-	std::cout << "\n   Time:-" << ( l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12);
+	std::cout << "\nTime:-" << ( l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12);
 	std::cout << ":" << l_time->tm_min << (l_time->tm_hour < 12 ? "am" : "pm");
 }
 
@@ -199,7 +199,7 @@ void AssistantObject::Check()
 	{
 		Speak("Good bye," + m_userName);
 		usleep(T_CONST * 600);
-		std::cout << "\n\n\n\n\n\n\t\t\t\t\t";
+		std::cout << "\n\n\n\n";
 		Typing("Created By : Chung Duc Nguyen Dang");
 		usleep(T_CONST * 1000);
 		system("clear");

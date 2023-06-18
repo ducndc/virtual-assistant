@@ -1,0 +1,8 @@
+/home/ducndc/workspaces/chat_bot/build/CMakeFiles/rebuild_cache.dir
+/home/ducndc/workspaces/chat_bot/build/CMakeFiles/edit_cache.dir
+/home/ducndc/workspaces/chat_bot/build/src/CMakeFiles/rebuild_cache.dir
+/home/ducndc/workspaces/chat_bot/build/src/CMakeFiles/edit_cache.dir
+/home/ducndc/workspaces/chat_bot/build/src/CMakeFiles/assistant_object.dir
+/home/ducndc/workspaces/chat_bot/build/apps/CMakeFiles/rebuild_cache.dir
+/home/ducndc/workspaces/chat_bot/build/apps/CMakeFiles/edit_cache.dir
+/home/ducndc/workspaces/chat_bot/build/apps/CMakeFiles/virtual_assistant.dir
