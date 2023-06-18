@@ -2,56 +2,188 @@
  * Author   : Chung Duc Nguyen Dang
  * Email    : nguyendangchungduc1999@gmail.com
  * 
- * assistant_utils.cc
+ * assistant_object.cc
  */
 
-#include "virtual_functions.h"
+#include "assistant_object.h"
+#include "parameter.h"
+
+void AssistantObject::Init()
+{
+	system("mkdir data");
+	system("clear");
+
+	LoadSetting();
+	LocalClock();
+	DisplayBanner();
+	Greeting();
+}
+
+void AssistantObject::DisplayBanner()
+{
+	system("clear");
+	std::cout << VERSION;
+}
+
+void AssistantObject::LoadSetting()
+{
+	std::ifstream file;
+	file.open(".user-settings", std::ios::in);
+
+	if (file.good())
+	{
+		std::string name;
+
+		while (!file.eof())
+		{
+			file >> m_userName >> m_speedOfAssistant >> m_volumeOfAssistant >> m_pithOfAssistant >> m_tSpeedOfAssistant;
+		}
+	}
+	else
+	{
+		m_userName = "Duc";
+		m_speedOfAssistant = 160;
+		m_pithOfAssistant = 80;
+		m_volumeOfAssistant = 100;
+		m_tSpeedOfAssistant = 40;
+	}
+	file.close();
+}
+
+void AssistantObject::SaveSettings(std::string un = "Duc", int ss = 160, int sa = 100, int sp = 40, int ts = 40)
+{
+	std::ofstream file;
+	file.open(".user-settings", std::ios::out);
+
+	file << un << " " << ss << " "  << sa << " "  << sp << " "  << ts;
+
+	file.close();
+}
+
+void AssistantObject::Greeting()
+{
+	std::cout << "\n";
+	usleep(T_CONST * 300);
+	Speak(m_greet);
+	usleep(T_CONST * 400);
+}
 
 
-int pos = 0;
-int l_pos = 0;
-int g_count = 0;
-int s_count = 0;
+void AssistantObject::Speak(std::string s)
+{
+	std::string cmd = "espeak -a";
+	cmd += std::to_string(m_volumeOfAssistant);
+	cmd += " -p";
+	cmd += std::to_string(m_pithOfAssistant);
+	cmd += " -s";
+	cmd += std::to_string(m_speedOfAssistant);
+	cmd += " \"";
+	cmd += s;
+	cmd += "\"";
 
-std::string g_userName;
-std::string m_word;
-std::string s_word;
-std::string g_input;
+	system(cmd.c_str());
 
-void Repeat()
+}
+
+void AssistantObject::Typing(std::string t)
+{
+	std::thread th(&AssistantObject::Speak, this, t); //using std::thread for TTS
+
+	for (int i = 0; t[i] != '\0'; i++)
+	{
+		std::cout << t[i] << std::flush;
+		usleep(T_CONST * m_tSpeedOfAssistant); // speed 40ms
+	}
+
+	th.join();//finish std::thread after complete TTS (text to speech)
+}
+
+std::string AssistantObject::GetUserName()
+{
+	return m_userName;
+}
+
+void AssistantObject::LocalClock()
+{
+	std::string day[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
+	std::string day_no[] = {"th", "st", "nd", "rd", "th", "th", "th", "th", "th", "th"};
+	std::string month[] = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
+	time_t now = time(0);
+	tm *l_time = localtime(&now);
+
+	if (l_time->tm_hour < 12)
+    {
+		m_greet = "Good morning";
+    }
+	else if (l_time->tm_hour >= 12)
+    {
+		if (l_time->tm_hour > 16)
+        {
+			m_greet = "Good evening";
+        }
+		else
+        {
+			m_greet = "Good Afternoon";
+        }
+    }
+
+	std::cout << "   " << month[l_time->tm_mon];
+	std::cout << " " << l_time->tm_mday << day_no[l_time->tm_mday % 10];
+	std::cout << " " << l_time->tm_year + 1900 ;
+
+	if (day[l_time->tm_wday] == "Monday")
+    {
+		std::cout << " (Sunday)";
+    }
+	else
+    {
+		std::cout << " (" << day[l_time->tm_wday - 1] << ")";
+    }
+
+	m_greet += " ";
+	m_greet += m_userName;
+    
+	std::cout << "\t\t\t\t\t";
+	std::cout << m_greet;
+	std::cout << "\n   Time:-" << ( l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12);
+	std::cout << ":" << l_time->tm_min << (l_time->tm_hour < 12 ? "am" : "pm");
+}
+
+void AssistantObject::Repeat()
 {
 	system("clear");
 	LocalClock();
 	std::cout << " \n\n\nType Here  ---> ";
 	std::cin.clear();
-	getline(std::cin, g_input);  /*get command from user*/
+	getline(std::cin, m_input);  /*get command from user*/
 
-	pos = g_input.find(" ");
-	m_word = g_input.substr(0, pos); /*main command word*/
-	l_pos = g_input.find('\0');
-	s_word = g_input.substr(pos + 1, l_pos); /*rest word*/
+	m_pos = m_input.find(" ");
+	m_mWord = m_input.substr(0, m_pos); /*main command word*/
+	m_lPos = m_input.find('\0');
+	m_sWord = m_input.substr(m_pos + 1, m_lPos); /*rest word*/
 
 	Check();
 }
 
-void Check()
+void AssistantObject::Check()
 {
-	if (("hi" == m_word) || ("hey" == m_word) || ("hello" == m_word) || ("hlo" == m_word))
+	if (("hi" == m_mWord) || ("hey" == m_mWord) || ("hello" == m_mWord) || ("hlo" == m_mWord))
 	{
-		Typing("Hi " + g_userName + ", how can I help you..");
+		Typing("Hi " + m_userName + ", how can I help you..");
 	}
-	else if ("play" == m_word)
+	else if ("play" == m_mWord)
 	{
-		if (("play" == g_input) || ("play " == g_input) || (" " == s_word) || ("  " == s_word) || ("   " == s_word))
+		if (("play" == m_input) || ("play " == m_input) || (" " == m_sWord) || ("  " == m_sWord) || ("   " == m_sWord))
 		{
-			Speak("Sorry " + g_userName + " ,you does not enter song name");
+			Speak("Sorry " + m_userName + " ,you does not enter song name");
 		}
 		else
 		{
-			PlaySong(s_word);
+			PlaySong(m_sWord);
 		}
 	}
-	else if (("update" == m_word) || ("updating" == m_word))
+	else if (("update" == m_mWord) || ("updating" == m_mWord))
 	{
 		system("clear");
 		CreateNewLine();
@@ -70,9 +202,9 @@ void Check()
 		CreateNewLine();
 		Typing("All songs are updated in the file");
 	}
-	else if (g_input == "exit" || g_input == "q" || g_input == "quit")
+	else if (m_input == "exit" || m_input == "q" || m_input == "quit")
 	{
-		Speak("Good bye," + g_userName);
+		Speak("Good bye," + m_userName);
 		usleep(T_CONST * 600);
 		std::cout << "\n\n\n\n\n\n\t\t\t\t\t";
 		Typing("Created By : Chung Duc Nguyen Dang");
@@ -80,19 +212,19 @@ void Check()
 		system("clear");
 		exit(1);
 	}
-	else if (g_input == "find ip" || g_input == "find my ip" || m_word == "ip")
+	else if (m_input == "find ip" || m_input == "find my ip" || m_mWord == "ip")
 	{
 		Typing("Finding your IP address");
 		system("ipconfig");
 		system("pause");
 	}
-	else if (m_word == "shutdown" || m_word == "restart")
+	else if (m_mWord == "shutdown" || m_mWord == "restart")
 	{
 		Typing("Your Pc will ");
-		Typing(m_word);
+		Typing(m_mWord);
 		ShutdownTimer(5);
 		Speak("Now , I am going to sleep");
-		if (m_word == "shutdown")
+		if (m_mWord == "shutdown")
 			system("shutdown");
 		else
 			system("reboot");
@@ -100,13 +232,13 @@ void Check()
 		exit(1);
 	}
 
-	else if (m_word == "what" || m_word == "who" || m_word == "how" || m_word == "when" || m_word == "where" || m_word == "why")
+	else if (m_mWord == "what" || m_mWord == "who" || m_mWord == "how" || m_mWord == "when" || m_mWord == "where" || m_mWord == "why")
 	{
-		if (g_input == "what is your name")
+		if (m_input == "what is your name")
 		{
 			Typing("My name is VA.");
 		}
-		else if (g_input == "who are you" || g_input == "who created you" || g_input == "who made you")
+		else if (m_input == "who are you" || m_input == "who created you" || m_input == "who made you")
 		{
 			Typing("I am VA, a virtual assistant");
 			usleep(T_CONST * 300);
@@ -115,16 +247,16 @@ void Check()
 			usleep(T_CONST * 300);
 		}
 		else
-			SearchKeyWord(g_input);
+			SearchKeyWord(m_input);
 	}
 
-	else if (g_input == "settings" || g_input == "setting" || g_input == "set")
+	else if (m_input == "settings" || m_input == "setting" || m_input == "set")
 		Settings();
 
-	else if (m_word == "song" || m_word == "music")
-		SearchKeyWord(s_word, "song");
+	else if (m_mWord == "song" || m_mWord == "music")
+		SearchKeyWord(m_sWord, "song");
 
-	else if (g_input == "install")
+	else if (m_input == "install")
 	{
 		system("mkdir My_beat");
 
@@ -142,56 +274,56 @@ void Check()
 		usleep(T_CONST * 300);
 	}
 
-	else if (g_input == "help")
+	else if (m_input == "help")
 		Help();
 
-	else if (m_word == "movie")
-		SearchKeyWord(s_word, "movie");
+	else if (m_mWord == "movie")
+		SearchKeyWord(m_sWord, "movie");
 
-	else if (m_word == "pdf")
-		SearchKeyWord(s_word, "pdf");
+	else if (m_mWord == "pdf")
+		SearchKeyWord(m_sWord, "pdf");
 
-	else if (m_word == "search")
-		SearchKeyWord(s_word);
+	else if (m_mWord == "search")
+		SearchKeyWord(m_sWord);
 
-	else if (m_word == "cmd")
-		system(s_word.c_str());
+	else if (m_mWord == "cmd")
+		system(m_sWord.c_str());
 
-	else if (g_input == "start hacking" || g_input == "hacking lab" || g_input == "hackingzone" || g_input == "hacking tools" || m_word == "hack")
+	else if (m_input == "start hacking" || m_input == "hacking lab" || m_input == "hackingzone" || m_input == "hacking tools" || m_mWord == "hack")
 	{
 		Hacking();
 	}
-	else if (m_word == "list")
+	else if (m_mWord == "list")
 	{
-		if (s_word == "all songs" || s_word == "songs")
+		if (m_sWord == "all songs" || m_sWord == "songs")
 			ShowSongLists("data/songs.txt");
 	}
-	else if (m_word == "block")
+	else if (m_mWord == "block")
 	{
-		BlockWebsite(s_word);
+		BlockWebsite(m_sWord);
 	}
-	else if (m_word == "yt" || m_word == "youtube" || m_word == "watch")
+	else if (m_mWord == "yt" || m_mWord == "youtube" || m_mWord == "watch")
 	{
-		SearchKeyWord(s_word, "youtube");
+		SearchKeyWord(m_sWord, "youtube");
 	}
-	else if (m_word == "open")
+	else if (m_mWord == "open")
 	{
-		if (s_word == "chrome" || s_word == "google chrome")
+		if (m_sWord == "chrome" || m_sWord == "google chrome")
 		{
 			system("chrome");
 		}
-		else if (s_word == "mozilla" || s_word == "firefox")
+		else if (m_sWord == "mozilla" || m_sWord == "firefox")
 		{
 			system("firefox");
 		}
 		else
-			OpenFile(s_word);
+			OpenFile(m_sWord);
 	}
 	else
 	{
-		Speak("Sorry " + g_userName + ", unknown command...");
-		g_count++;
-		if (g_count >= 3)
+		Speak("Sorry " + m_userName + ", unknown command...");
+		m_count++;
+		if (m_count >= 3)
 		{	usleep(T_CONST * 600);
 			Speak("I think ");
 			usleep(T_CONST * 500);
@@ -206,7 +338,7 @@ void Check()
 	Repeat();
 }
 
-void Settings()
+void AssistantObject::Settings()
 {
 	std::string un;
 	int ss, sa, sp, ts;
@@ -237,7 +369,7 @@ void Settings()
 	std::cin.ignore('\n');
 }
 
-void PlaySong(std::string item)
+void AssistantObject::PlaySong(std::string item)
 {
 	std::ifstream file;
 	std::string song_name;
@@ -269,7 +401,7 @@ void PlaySong(std::string item)
 	{
 		Typing(song_name);
 		Typing(" not found.");
-		if (s_count % 3 == 0)
+		if (m_sCount % 3 == 0)
 		{
 			usleep(T_CONST * 200);
 			system("clear");
@@ -279,13 +411,13 @@ void PlaySong(std::string item)
 			Typing("song ");
 			Typing(song_name);
 		}
-		s_count++;
+		m_sCount++;
 	}
 
 	file.close();
 }
 
-void ConvertSpaceToUnderscore(std::string &c)
+void AssistantObject::ConvertSpaceToUnderscore(std::string &c)
 {
 
 	for (int i = 0; c[i] != '\0'; i++)
@@ -296,7 +428,7 @@ void ConvertSpaceToUnderscore(std::string &c)
 	}
 }
 
-void UpdateSong(std::string name)
+void AssistantObject::UpdateSong(std::string name)
 {
 	std::fstream a, b;
 	char word[20], old[20];
@@ -311,7 +443,7 @@ void UpdateSong(std::string name)
 	a.close();
 }
 
-void DisplayClock(int seconds)
+void AssistantObject::DisplayClock(int seconds)
 {
 	int h, m;
 	h = m = 0;
@@ -327,7 +459,7 @@ void DisplayClock(int seconds)
 	std::cout << std::setfill(' ') << std::setw(75) << " --------------------------\n";
 }
 
-void ShutdownTimer(int t)
+void AssistantObject::ShutdownTimer(int t)
 {
 	while (t)
 	{
@@ -337,7 +469,7 @@ void ShutdownTimer(int t)
 	}
 }
 
-void SearchKeyWord(std::string query, std::string extra)
+void AssistantObject::SearchKeyWord(std::string query, std::string extra)
 {
 	for (int i = 0; query[i] != '\0'; i++)
 	{
@@ -350,7 +482,7 @@ void SearchKeyWord(std::string query, std::string extra)
 	CreateNewLine();
 	Typing("Cheking internet connection...");
 
-	if (s_count % 5 == 0)
+	if (m_sCount % 5 == 0)
 	{
 		CreateNewLine();
 		usleep(T_CONST * 90);
@@ -413,15 +545,15 @@ void SearchKeyWord(std::string query, std::string extra)
 		system(std::string(url).c_str());
 	}
 
-	s_count++;
+	m_sCount++;
 }
 
-void CreateNewLine()
+void AssistantObject::CreateNewLine()
 {
 	std::cout << "\n";
 }
 
-void Install(std::string fold)
+void AssistantObject::Install(std::string fold)
 {
 	std::fstream file;
 	std::string foldname, filename;
@@ -436,24 +568,24 @@ void Install(std::string fold)
 	file.close();
 }
 
-void ShowSongLists(std::string link)
+void AssistantObject::ShowSongLists(std::string link)
 {
 	std::fstream file;
-	int g_count = 0;
+	int count = 0;
 	char word[50], old[50];
 	file.open(link);
 
 	while (file >> word >> old)
 	{
-		g_count++;
+		count++;
 		std::cout << word << "\n";
 	}
-	std::cout << "\n\t\tTotal songs available :" << g_count << std::endl;
+	std::cout << "\n\t\tTotal songs available :" << count << std::endl;
 	std::string p, s = "Only ";
-	p = g_count;
+	p = count;
 	s += p;
 	s += "songs are available";
-	if (g_count != 0)
+	if (count != 0)
 	{
 		Speak(s);
 	}
@@ -461,7 +593,7 @@ void ShowSongLists(std::string link)
 	system("pause");
 }
 
-void Hacking()
+void AssistantObject::Hacking()
 {
 	system("clear");
 	system("color f");
@@ -488,7 +620,7 @@ void Hacking()
 	Typing("Still in development...");
 }
 
-void BlockWebsite(std::string website)
+void AssistantObject::BlockWebsite(std::string website)
 {
 	std::fstream file;
 	file.open("C:/WINDOWS/system32/drivers/etc/hosts", std::ios::app);
@@ -497,7 +629,7 @@ void BlockWebsite(std::string website)
 	file.close();
 }
 
-void OpenFile(std::string location)
+void AssistantObject::OpenFile(std::string location)
 {
 	std::string path = "xdg-open ", item = location;
 	ConvertSpaceToUnderscore(item);
@@ -507,9 +639,9 @@ void OpenFile(std::string location)
 	system(std::string(path).c_str());
 }
 
-void Help()
+void AssistantObject::Help()
 {
-	g_count = 0;
+	m_count = 0;
 	Speak("you can use only these cammands");
 	system("clear");
 	std::cout << "\n\n";

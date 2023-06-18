@@ -1,4 +1,4 @@
-OBJS = 	src/main_assistant.o src/assistant_utils.o src/virtual_functions.o
+OBJS = src/main.o src/assistant_object.o
 
 # compile code and create executable file
 assistant : $(OBJS)
