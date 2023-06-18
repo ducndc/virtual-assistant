@@ -12,7 +12,6 @@ void AssistantObject::Init()
 {
 	system("mkdir data");
 	system("clear");
-
 	LoadSetting();
 	LocalClock();
 	DisplayBanner();
@@ -54,9 +53,7 @@ void AssistantObject::SaveSettings(std::string un = "Duc", int ss = 160, int sa 
 {
 	std::ofstream file;
 	file.open(".user-settings", std::ios::out);
-
 	file << un << " " << ss << " "  << sa << " "  << sp << " "  << ts;
-
 	file.close();
 }
 
@@ -67,7 +64,6 @@ void AssistantObject::Greeting()
 	Speak(m_greet);
 	usleep(T_CONST * 400);
 }
-
 
 void AssistantObject::Speak(std::string s)
 {
@@ -80,9 +76,7 @@ void AssistantObject::Speak(std::string s)
 	cmd += " \"";
 	cmd += s;
 	cmd += "\"";
-
 	system(cmd.c_str());
-
 }
 
 void AssistantObject::Typing(std::string t)
@@ -132,7 +126,7 @@ void AssistantObject::LocalClock()
 	std::cout << " " << l_time->tm_mday << day_no[l_time->tm_mday % 10];
 	std::cout << " " << l_time->tm_year + 1900 ;
 
-	if (day[l_time->tm_wday] == "Monday")
+	if ("Monday" == day[l_time->tm_wday])
     {
 		std::cout << " (Sunday)";
     }
@@ -162,7 +156,6 @@ void AssistantObject::Repeat()
 	m_mWord = m_input.substr(0, m_pos); /*main command word*/
 	m_lPos = m_input.find('\0');
 	m_sWord = m_input.substr(m_pos + 1, m_lPos); /*rest word*/
-
 	Check();
 }
 
@@ -202,7 +195,7 @@ void AssistantObject::Check()
 		CreateNewLine();
 		Typing("All songs are updated in the file");
 	}
-	else if (m_input == "exit" || m_input == "q" || m_input == "quit")
+	else if (("exit" == m_input) || ("q" == m_input) || ("quit" == m_input))
 	{
 		Speak("Good bye," + m_userName);
 		usleep(T_CONST * 600);
@@ -212,33 +205,32 @@ void AssistantObject::Check()
 		system("clear");
 		exit(1);
 	}
-	else if (m_input == "find ip" || m_input == "find my ip" || m_mWord == "ip")
+	else if (("find ip" == m_input) || ("find my ip" == m_input) || ("ip" == m_mWord))
 	{
 		Typing("Finding your IP address");
 		system("ipconfig");
 		system("pause");
 	}
-	else if (m_mWord == "shutdown" || m_mWord == "restart")
+	else if (("shutdown" == m_mWord) || ("restart" == m_mWord))
 	{
 		Typing("Your Pc will ");
 		Typing(m_mWord);
 		ShutdownTimer(5);
 		Speak("Now , I am going to sleep");
-		if (m_mWord == "shutdown")
+		if ("shutdown" == m_mWord)
 			system("shutdown");
 		else
 			system("reboot");
 		usleep(T_CONST * 10);
 		exit(1);
 	}
-
-	else if (m_mWord == "what" || m_mWord == "who" || m_mWord == "how" || m_mWord == "when" || m_mWord == "where" || m_mWord == "why")
+	else if (("what" == m_mWord) || ("who" == m_mWord) || ("how" == m_mWord) || ("when" == m_mWord) || ("where" == m_mWord) || ("why" == m_mWord))
 	{
 		if (m_input == "what is your name")
 		{
 			Typing("My name is VA.");
 		}
-		else if (m_input == "who are you" || m_input == "who created you" || m_input == "who made you")
+		else if (("who are you" == m_input) || ("who created you" == m_input) || ("who made you" == m_input))
 		{
 			Typing("I am VA, a virtual assistant");
 			usleep(T_CONST * 300);
@@ -247,19 +239,21 @@ void AssistantObject::Check()
 			usleep(T_CONST * 300);
 		}
 		else
+        {
 			SearchKeyWord(m_input);
-	}
-
-	else if (m_input == "settings" || m_input == "setting" || m_input == "set")
-		Settings();
-
-	else if (m_mWord == "song" || m_mWord == "music")
-		SearchKeyWord(m_sWord, "song");
-
-	else if (m_input == "install")
+        }
+    }
+	else if (("settings" == m_input) || ("setting" == m_input) || ("set" == m_input))
+	{	
+        Settings();
+    }
+	else if (("song" == m_mWord) || ("music" == m_mWord))
+	{	
+        SearchKeyWord(m_sWord, "song");
+    }
+	else if ("install" == m_input)
 	{
 		system("mkdir My_beat");
-
 		Install("hindi");
 		Install("english");
 		Install("punjabi");
@@ -273,46 +267,50 @@ void AssistantObject::Check()
 		Typing("\nAll files are installed");
 		usleep(T_CONST * 300);
 	}
-
-	else if (m_input == "help")
-		Help();
-
-	else if (m_mWord == "movie")
-		SearchKeyWord(m_sWord, "movie");
-
-	else if (m_mWord == "pdf")
-		SearchKeyWord(m_sWord, "pdf");
-
-	else if (m_mWord == "search")
-		SearchKeyWord(m_sWord);
-
-	else if (m_mWord == "cmd")
-		system(m_sWord.c_str());
-
-	else if (m_input == "start hacking" || m_input == "hacking lab" || m_input == "hackingzone" || m_input == "hacking tools" || m_mWord == "hack")
+	else if ("help" == m_input)
+	{	
+        Help();
+    }
+	else if ("movie" == m_mWord)
+	{	
+        SearchKeyWord(m_sWord, "movie");
+    }
+    else if ("pdf" == m_mWord)
+	{	
+        SearchKeyWord(m_sWord, "pdf");
+    }
+    else if ("search" == m_mWord)
+	{	
+        SearchKeyWord(m_sWord);
+    }
+    else if ("cmd" == m_mWord)
+	{	
+        system(m_sWord.c_str());
+    }
+    else if (("start hacking" == m_input) || ("hacking lab" == m_input) || ("hackingzone" == m_input) || ("hacking tools" == m_input) || ("hack" == m_mWord))
 	{
 		Hacking();
 	}
-	else if (m_mWord == "list")
+	else if ("list" == m_mWord)
 	{
-		if (m_sWord == "all songs" || m_sWord == "songs")
+		if (("all songs" == m_sWord) || ("songs" == m_sWord))
 			ShowSongLists("data/songs.txt");
 	}
-	else if (m_mWord == "block")
+	else if ("block" == m_mWord)
 	{
 		BlockWebsite(m_sWord);
 	}
-	else if (m_mWord == "yt" || m_mWord == "youtube" || m_mWord == "watch")
+	else if (("yt" == m_mWord) || ("youtube" == m_mWord) || ("watch" == m_mWord))
 	{
 		SearchKeyWord(m_sWord, "youtube");
 	}
-	else if (m_mWord == "open")
+	else if ("open" == m_mWord)
 	{
-		if (m_sWord == "chrome" || m_sWord == "google chrome")
+		if (("chrome" == m_sWord) || ("google chrome" == m_sWord))
 		{
 			system("chrome");
 		}
-		else if (m_sWord == "mozilla" || m_sWord == "firefox")
+		else if (("mozilla" == m_sWord) || ("firefox" == m_sWord))
 		{
 			system("firefox");
 		}
@@ -342,7 +340,6 @@ void AssistantObject::Settings()
 {
 	std::string un;
 	int ss, sa, sp, ts;
-
 	std::cout << "\n\n";
 	Typing("Enter data in the following given format:\n");
 	std::cout << "\n1.user name(single word only)";
@@ -501,13 +498,13 @@ void AssistantObject::SearchKeyWord(std::string query, std::string extra)
 	Speak("Connecting to your browser.");
 	std::string url;
 
-	if (extra == "youtube")
+	if ("youtube" == extra)
 	{
 		url = "xdg-open https://www.youtube.com/results?search_query=";
 		url += query;
 		system(std::string(url).c_str());
 	}
-	else if (extra == "song")
+	else if ("song" == extra)
 	{
 		// for international songs
 		url = "xdg-open https://en.muzmo.org/search?q=";
@@ -525,13 +522,13 @@ void AssistantObject::SearchKeyWord(std::string query, std::string extra)
 		system(std::string(url).c_str());
 		usleep(T_CONST * 50);
 	}
-	else if (extra == "pdf")
+	else if ("pdf" == extra)
 	{
 		url = "xdg-open https://www.google.com/search?q=filetype%3Apdf+";
 		url += query;
 		system(std::string(url).c_str());
 	}
-	else if (extra == "movie")
+	else if ("movie" == extra)
 	{
 		url = "xdg-open https://www.google.com/search?q=";
 		url += query;
@@ -623,7 +620,7 @@ void AssistantObject::Hacking()
 void AssistantObject::BlockWebsite(std::string website)
 {
 	std::fstream file;
-	file.open("C:/WINDOWS/system32/drivers/etc/hosts", std::ios::app);
+	file.open("echo", std::ios::app);
 	file << "\n127.0.0.2 www." << website;
 	Typing("Blocking the website..");
 	file.close();
