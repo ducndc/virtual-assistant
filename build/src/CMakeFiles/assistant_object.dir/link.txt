@@ -1,2 +1,2 @@
-/usr/bin/ar qc libassistant_object.a  CMakeFiles/assistant_object.dir/assistant_object.cc.o
+/usr/bin/ar qc libassistant_object.a CMakeFiles/assistant_object.dir/assistant_object.cc.o
 /usr/bin/ranlib libassistant_object.a

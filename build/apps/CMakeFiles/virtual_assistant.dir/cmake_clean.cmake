@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/virtual_assistant.dir/main.cc.o"
+  "CMakeFiles/virtual_assistant.dir/main.cc.o.d"
   "virtual_assistant"
   "virtual_assistant.pdb"
 )

@@ -1,1 +1,1 @@
-/usr/bin/c++     CMakeFiles/virtual_assistant.dir/main.cc.o  -o virtual_assistant  ../src/libassistant_object.a -pthread 
+/usr/lib/ccache/c++ CMakeFiles/virtual_assistant.dir/main.cc.o -o virtual_assistant  ../src/libassistant_object.a

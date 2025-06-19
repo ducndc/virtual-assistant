@@ -253,6 +253,14 @@ public:
      * @return
     */
     void DisplayClock(int seconds);
+
+    /**
+     * Enter keyboard
+     * 
+     * @param 
+     * @return
+     */
+    char GetHiddenInput();
 };
 
 #endif /* ASSISTANT_OBJECT_H */

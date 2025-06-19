@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/assistant_object.dir/assistant_object.cc.o"
+  "CMakeFiles/assistant_object.dir/assistant_object.cc.o.d"
   "libassistant_object.a"
   "libassistant_object.pdb"
 )

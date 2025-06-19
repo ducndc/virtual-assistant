@@ -5,6 +5,8 @@
  * assistant_object.cc
  */
 
+#include <termios.h>
+
 #include "assistant_object.h"
 #include "parameter.h"
 
@@ -639,6 +641,7 @@ void AssistantObject::OpenFile(std::string location)
 void AssistantObject::Help()
 {
 	m_count = 0;
+	char wait;
 	Speak("you can use only these cammands");
 	system("clear");
 	std::cout << "\n\n";
@@ -663,5 +666,21 @@ void AssistantObject::Help()
 	std::cout << std::setfill(' ') << std::setw(75) << "   10.exit/quit/q            \n";
 	std::cout << std::setfill(' ') << std::setw(75) << "   11.shutdown/restart       \n";
 	std::cout << std::setfill(' ') << std::setw(75) << "   12.install                \n";
-	usleep(T_CONST * 3000);
+	//usleep(T_CONST * 3000);
+	do {
+		std::cout << "Enter q to continue" << std::endl;
+		wait = GetHiddenInput();
+	} while (wait != 'q');
+}
+
+char AssistantObject::GetHiddenInput() {
+	termios oldt, newt;
+    char ch;
+    tcgetattr(STDIN_FILENO, &oldt);
+    newt = oldt;
+    newt.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSANOW, &newt);
+    read(STDIN_FILENO, &ch, 1);
+    tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    return ch;
 }
