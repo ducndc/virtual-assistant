@@ -1,1 +1,0 @@
-/usr/lib/ccache/c++ CMakeFiles/virtual_assistant.dir/main.cc.o -o virtual_assistant  ../src/libassistant_object.a
