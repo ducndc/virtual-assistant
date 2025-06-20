@@ -12,6 +12,5 @@ int main()
     AssistantObject assistantFriend;
     assistantFriend.Init();
     assistantFriend.Repeat();
-    
     return 0;
 }

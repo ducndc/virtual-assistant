@@ -5,7 +5,7 @@ The requirements are:
 
 - CMake 3.11 or better; 3.14+ highly recommended.
 - A C++17 compatible compiler
-- The espeak libararies 
+- The espeak, mbrola, mbrola-us1 libararies 
 - Git
 - Doxygen (optional)
 

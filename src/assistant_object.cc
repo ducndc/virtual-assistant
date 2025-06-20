@@ -49,6 +49,7 @@ void AssistantObject::LoadSetting()
 		m_volumeOfAssistant = 120;
 		m_tSpeedOfAssistant = 50;
 	}
+	
 	file.close();
 }
 
@@ -159,7 +160,6 @@ void AssistantObject::Repeat()
 	std::cin.clear();
 	getline(std::cin, m_input);  /*get command from user*/
     std::transform(m_input.begin(), m_input.end(), m_input.begin(), ::tolower);
-
 	m_pos = m_input.find(" ");
 	m_mWord = m_input.substr(0, m_pos); /*main command word*/
 	m_lPos = m_input.find('\0');
@@ -329,6 +329,7 @@ void AssistantObject::Check()
 	{
 		Speak("Sorry " + m_userName + ", unknown command...");
 		m_count++;
+
 		if (m_count >= 3)
 		{	usleep(T_CONST * 600);
 			Speak("I think ");
@@ -371,6 +372,7 @@ void AssistantObject::Settings()
 	{
 		Speak("Something went wrong");
 	}
+
 	std::cin.ignore('\n');
 }
 
@@ -383,6 +385,7 @@ void AssistantObject::PlaySong(std::string item)
 	char song[30], singer[30];
 	char path[90] = "xdg-open My_beat/";
 	file.open("data/songs.txt", std::ios::app);
+
 	while (file >> song >> singer)
 	{
 		if (song == item)
@@ -406,6 +409,7 @@ void AssistantObject::PlaySong(std::string item)
 	{
 		Typing(song_name);
 		Typing(" not found.");
+
 		if (m_sCount % 3 == 0)
 		{
 			usleep(T_CONST * 200);
@@ -416,6 +420,7 @@ void AssistantObject::PlaySong(std::string item)
 			Typing("song ");
 			Typing(song_name);
 		}
+
 		m_sCount++;
 	}
 
@@ -440,10 +445,12 @@ void AssistantObject::UpdateSong(std::string name)
 	system("clear");
 	a.open("My_beat/" + name + "/list.txt");
 	b.open("data/temp.txt", std::ios::app | std::ios::ate);
+
 	while (a >> word)
 	{
 		b << word << " " << name << "\n";
 	}
+
 	b.close();
 	a.close();
 }
@@ -585,15 +592,18 @@ void AssistantObject::ShowSongLists(std::string link)
 		count++;
 		std::cout << word << "\n";
 	}
+
 	std::cout << "\n\t\tTotal songs available :" << count << std::endl;
 	std::string p, s = "Only ";
 	p = count;
 	s += p;
 	s += "songs are available";
+
 	if (count != 0)
 	{
 		Speak(s);
 	}
+
 	file.close();
 	system("pause");
 }
@@ -670,6 +680,7 @@ void AssistantObject::Help()
 	std::cout << "   11.shutdown/restart       \n";
 	std::cout << "   12.install                \n";
 	std::cout << "   Enter q to continue" << std::endl;
+
 	do {
 		wait = GetHiddenInput();
 	    usleep(T_CONST * 100);
