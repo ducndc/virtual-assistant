@@ -7,6 +7,7 @@
 
 #include <termios.h>
 #include <algorithm>
+#include <filesystem>
 
 #include "assistant_object.h"
 #include "parameter.h"
@@ -49,7 +50,7 @@ void AssistantObject::LoadSetting()
 		m_volumeOfAssistant = 120;
 		m_tSpeedOfAssistant = 50;
 	}
-	
+
 	file.close();
 }
 
@@ -307,6 +308,10 @@ void AssistantObject::Check()
 	else if ("block" == m_mWord)
 	{
 		BlockWebsite(m_sWord);
+	}
+	else if ("note" == m_mWord)
+	{
+		Note();
 	}
 	else if (("yt" == m_mWord) || ("youtube" == m_mWord) || ("watch" == m_mWord))
 	{
@@ -644,6 +649,22 @@ void AssistantObject::BlockWebsite(std::string website)
 	file.close();
 }
 
+void AssistantObject::Note(void)
+{
+	std::string cmd = "vim " NOTE_FILE_PATH; 
+
+	if (std::filesystem::exists(NOTE_FILE_PATH)) 
+	{
+		system(std::string(cmd).c_str());
+	}
+	else
+	{
+		std::string createFileCMD = "touch " NOTE_FILE_PATH;
+		system(std::string(createFileCMD).c_str());
+		system(std::string(cmd).c_str());
+	}
+}
+
 void AssistantObject::OpenFile(std::string location)
 {
 	std::string path = "xdg-open ", item = location;
@@ -679,6 +700,7 @@ void AssistantObject::Help()
 	std::cout << "   10.exit/quit/q            \n";
 	std::cout << "   11.shutdown/restart       \n";
 	std::cout << "   12.install                \n";
+	std::cout << "   13.note                   \n";
 	std::cout << "   Enter q to continue" << std::endl;
 
 	do {

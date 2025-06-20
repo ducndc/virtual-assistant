@@ -11,6 +11,8 @@
 #define T_CONST 1000
 #define VERSION " ASSISTANT VERTION 1 "
 
+#define NOTE_FILE_PATH	"./data/note.txt"
+
 #define QUIT_KEY    'q'
 
 #endif /* PARAMATER_H */

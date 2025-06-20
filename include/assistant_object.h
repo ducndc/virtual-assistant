@@ -261,6 +261,14 @@ public:
      * @return
      */
     char GetHiddenInput();
+
+    /**
+     * Handle note
+     * 
+     * @param 
+     * @return
+     */
+    void Note(void);
 };
 
 #endif /* ASSISTANT_OBJECT_H */
