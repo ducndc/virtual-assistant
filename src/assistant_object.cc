@@ -6,6 +6,7 @@
  */
 
 #include <termios.h>
+#include <algorithm>
 
 #include "assistant_object.h"
 #include "parameter.h"
@@ -43,10 +44,10 @@ void AssistantObject::LoadSetting()
 	else
 	{
 		m_userName = "Duc";
-		m_speedOfAssistant = 160;
-		m_pithOfAssistant = 80;
-		m_volumeOfAssistant = 100;
-		m_tSpeedOfAssistant = 40;
+		m_speedOfAssistant = 130;
+		m_pithOfAssistant = 50;
+		m_volumeOfAssistant = 120;
+		m_tSpeedOfAssistant = 50;
 	}
 	file.close();
 }
@@ -69,16 +70,20 @@ void AssistantObject::Greeting()
 
 void AssistantObject::Speak(std::string s)
 {
-	std::string cmd = "espeak -a";
-	cmd += std::to_string(m_volumeOfAssistant);
-	cmd += " -p";
-	cmd += std::to_string(m_pithOfAssistant);
-	cmd += " -s";
-	cmd += std::to_string(m_speedOfAssistant);
-	cmd += " \"";
-	cmd += s;
-	cmd += "\"";
-	system(cmd.c_str());
+    std::string cmd = "espeak -v mb-us1";
+    // volume: dùng option -a (0-200)
+    cmd += " -a";
+    cmd += std::to_string(m_volumeOfAssistant);
+    // pitch: option -p (0-99)
+    cmd += " -p";
+    cmd += std::to_string(m_pithOfAssistant);
+    // speed: option -s (80-450)
+    cmd += " -s";
+    cmd += std::to_string(m_speedOfAssistant);
+    cmd += " \"";
+    cmd += s;
+    cmd += "\"";
+    system(cmd.c_str());
 }
 
 void AssistantObject::Typing(std::string t)
@@ -142,7 +147,7 @@ void AssistantObject::LocalClock()
     
 	std::cout << "\n";
 	std::cout << m_greet;
-	std::cout << "\nTime:-" << ( l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12);
+	std::cout << "\nTime:   " << ( l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12);
 	std::cout << ":" << l_time->tm_min << (l_time->tm_hour < 12 ? "am" : "pm");
 }
 
@@ -153,6 +158,7 @@ void AssistantObject::Repeat()
 	std::cout << " \n\n\nType Here  ---> ";
 	std::cin.clear();
 	getline(std::cin, m_input);  /*get command from user*/
+    std::transform(m_input.begin(), m_input.end(), m_input.begin(), ::tolower);
 
 	m_pos = m_input.find(" ");
 	m_mWord = m_input.substr(0, m_pos); /*main command word*/
@@ -642,35 +648,32 @@ void AssistantObject::Help()
 {
 	m_count = 0;
 	char wait;
-	Speak("you can use only these cammands");
 	system("clear");
-	std::cout << "\n\n";
-	system("color f");
 	CreateNewLine();
-	std::cout << std::setfill(' ') << std::setw(75) << "----------------------------\n";
-	std::cout << std::setfill(' ') << std::setw(75) << "          Commands          \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "--------------------------\n\n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    1.search (any question)  \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    2.open (google,mozilla)  \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    3.block (website name)   \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    4.song (song name)       \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    5.update                 \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    6.watch (videoname)      \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    7.pdf (pdfname)          \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "    8.movie (moviename)      \n";
-	std::cout << std::setfill(' ') << std::setw(85) << "    9.what/how/where/who/why (question)\n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   10.cmd (cmd commands)     \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   11.find my ip             \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   12.play (song name)       \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   13.list songs             \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   10.exit/quit/q            \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   11.shutdown/restart       \n";
-	std::cout << std::setfill(' ') << std::setw(75) << "   12.install                \n";
-	//usleep(T_CONST * 3000);
+	std::cout << "-----------------------------\n";
+	std::cout << "           Commands          \n";
+	std::cout << "-----------------------------\n";
+	std::cout << "    1.search (any question)  \n";
+	std::cout << "    2.open (google,mozilla)  \n";
+	std::cout << "    3.block (website name)   \n";
+	std::cout << "    4.song (song name)       \n";
+	std::cout << "    5.update                 \n";
+	std::cout << "    6.watch (videoname)      \n";
+	std::cout << "    7.pdf (pdfname)          \n";
+	std::cout << "    8.movie (moviename)      \n";
+	std::cout << "    9.what/how/where/who/why (question)\n";
+	std::cout << "   10.cmd (cmd commands)     \n";
+	std::cout << "   11.find my ip             \n";
+	std::cout << "   12.play (song name)       \n";
+	std::cout << "   13.list songs             \n";
+	std::cout << "   10.exit/quit/q            \n";
+	std::cout << "   11.shutdown/restart       \n";
+	std::cout << "   12.install                \n";
+	std::cout << "   Enter q to continue" << std::endl;
 	do {
-		std::cout << "Enter q to continue" << std::endl;
 		wait = GetHiddenInput();
-	} while (wait != 'q');
+	    usleep(T_CONST * 100);
+	} while (wait != QUIT_KEY);
 }
 
 char AssistantObject::GetHiddenInput() {
