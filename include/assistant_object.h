@@ -45,7 +45,7 @@ public:
      * @param:
      * @return
     */
-    void Init();
+    void Init(void);
 
     /**
      * @brief Load paramaters form file
@@ -53,7 +53,7 @@ public:
      * @param:
      * @return
     */
-    void LoadSetting();
+    void LoadSetting(void);
 
     /**
      * Display banner of virtual assistant
@@ -61,7 +61,7 @@ public:
      * @param:
      * @return
     */
-    void DisplayBanner();
+    void DisplayBanner(void);
 
     /**
      * Get greet for virtual assistant
@@ -69,7 +69,7 @@ public:
      * @param:
      * @return
     */
-    void Greeting();
+    void Greeting(void);
 
     /**
      * Get local clock
@@ -77,7 +77,7 @@ public:
      * @param:
      * @return
     */
-    void LocalClock();
+    void LocalClock(void);
 
     /**
      * Typing string from keyboard
@@ -109,7 +109,7 @@ public:
      * @param:
      * @return
     */
-    std::string GetUserName();
+    std::string GetUserName(void);
 
     /**
      * Compare the user input with defined commands 
@@ -118,7 +118,7 @@ public:
      * @return
      * 
      */
-    void Check();  
+    void Check(void);  
 
     /**
      * Create new line 
@@ -127,7 +127,7 @@ public:
      * @return
      * 
      */
-    void CreateNewLine(); 
+    void CreateNewLine(void); 
 
     /**
      * Ask user input again 
@@ -136,7 +136,7 @@ public:
      * @return
      * 
      */
-    void Repeat(); 
+    void Repeat(void); 
 
     /**
      * Timer for shutdown 
@@ -163,7 +163,7 @@ public:
      * @return
      * 
      */
-    void Help(); 
+    void Help(void); 
 
     /**
      * Hacking
@@ -172,7 +172,7 @@ public:
      * @return
      * 
      */
-    void Hacking();
+    void Hacking(void);
 
     /**
      * Create music folders
@@ -244,7 +244,7 @@ public:
      * @param:
      * @return
     */
-    void Settings(); 
+    void Settings(void); 
 
     /**
      * Display clock
@@ -260,7 +260,7 @@ public:
      * @param 
      * @return
      */
-    char GetHiddenInput();
+    char GetHiddenInput(void);
 
     /**
      * Handle note
