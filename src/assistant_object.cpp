@@ -368,7 +368,7 @@ AssistantObject::Check(void)
 	else if ("list" == m_mWord)
 	{
 		if (("all songs" == m_sWord) || ("songs" == m_sWord))
-			ShowSongLists("data/songs.txt");
+			ShowSongLists(SONG_FILE_PATH);
 	}
 	else if ("block" == m_mWord)
 	{

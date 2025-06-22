@@ -14,7 +14,7 @@
 #define LOG_SYMBOL			"[*] "
 
 #define NOTE_FILE_PATH		"./data/note.txt"
-#define SONG_FILE_PATH		"data/songs.txt"
+#define SONG_FILE_PATH		"./data/songs.txt"
 #define MY_BEAT_FOLDER		"My_beat/"
 #define LIST_FILE_PATH		"/list.txt"
 #define TEMP_FILE_PATH		"data/temp.txt"
