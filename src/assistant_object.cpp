@@ -13,7 +13,7 @@
 #include "assistant_object.hpp"
 #include "parameter.hpp"
 
-extern std::atomic<bool> running;
+extern std::atomic<bool> g_running;
 
 void 
 AssistantObject::Init(WINDOW* win)
@@ -23,7 +23,7 @@ AssistantObject::Init(WINDOW* win)
     box(m_win, 0, 0);
     mvwprintw(m_win, 0, 2, " Virtual Assistant ");
     wrefresh(m_win);
-	//system(MAKE_DIR_CMD "data");
+	system(MAKE_DIR_CMD "data");
 	LoadSetting();
 	LocalClock();
 	DisplayBanner();
@@ -83,7 +83,6 @@ AssistantObject::SaveSettings(
 void 
 AssistantObject::Greeting(void)
 {
-	//std::cout << "\n";
 	usleep(T_CONST * 300);
 	Speak(m_greet);
 	usleep(T_CONST * 400);
@@ -165,18 +164,18 @@ AssistantObject::LocalClock(void)
 
 	if ("Monday" == day[l_time->tm_wday])
     {
-		mvwprintw(m_win, 1, 2, "[*] (Sunday)");
+		mvwprintw(m_win, 1, 2, LOG_SYMBOL "(Sunday)");
     }
 	else
     {
-    	mvwprintw(m_win, 1, 2, "[*] %s", day[l_time->tm_wday - 1].c_str());
+    	mvwprintw(m_win, 1, 2, LOG_SYMBOL "%s", day[l_time->tm_wday - 1].c_str());
     }
 
 	m_greet += " ";
 	m_greet += m_userName;
     
-    mvwprintw(m_win, 2, 2, "[*] %s", m_greet.c_str());
-    mvwprintw(m_win, 3, 2, "[*] Time: %dh%dm %s", 
+    mvwprintw(m_win, 2, 2, LOG_SYMBOL "%s", m_greet.c_str());
+    mvwprintw(m_win, 3, 2, LOG_SYMBOL "Time: %dh%dm %s", 
     	(l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12), 
     	l_time->tm_min, (l_time->tm_hour < 12 ? "am" : "pm"));
 }
@@ -190,7 +189,7 @@ AssistantObject::Repeat(void)
 
     int input_row = max_y - 2;
 
-    while (running) 
+    while (g_running) 
     {
         box(m_win, 0, 0);
         mvwprintw(m_win, 0, 2, " Virtual Assistant ");
@@ -198,7 +197,7 @@ AssistantObject::Repeat(void)
 		char input[128] = {0};
 		int pos = 0;
 		mvwhline(m_win, input_row, 1, ' ', max_x - 2);
-		mvwprintw(m_win, input_row, 2, "[*] Type: ---> ");
+		mvwprintw(m_win, input_row, 2, LOG_SYMBOL "Type: ---> ");
 		wmove(m_win, input_row, 4);
 		wrefresh(m_win);
 		int ch;
@@ -647,12 +646,6 @@ AssistantObject::SearchKeyWord(
 }
 
 void 
-AssistantObject::CreateNewLine(void)
-{
-	//std::cout << "\n";
-}
-
-void 
 AssistantObject::Install(
 	std::string fold)
 {
@@ -791,7 +784,7 @@ AssistantObject::Help(void)
 	//std::cout << "   11.shutdown/restart       \n";
 	//std::cout << "   12.install                \n";
 	//std::cout << "   13.note                   \n";
-	WaitOut();
+	//WaitOut();
 }
 
 char 

@@ -13,13 +13,13 @@
 #include "eye_object.hpp"
 #include "parameter.hpp"
 
-extern std::atomic<bool> running;
+extern std::atomic<bool> g_running;
 
 void 
 EyeObject::Init(WINDOW* win)
 {
 	m_win = win;
-	m_width = 40; 
+	m_width = 160; 
 	m_height = 20; 
 	m_pShades = " .:-=+*#%@";
 	m_angle = 0.0f;
@@ -64,7 +64,7 @@ EyeObject::DisplayEye(void)
 {
     float angle = 0.0f;
     
-    while (running) 
+    while (g_running) 
     {
         DrawEye(angle, angle * 0.5f);
         angle += 0.1f;

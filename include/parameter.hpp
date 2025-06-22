@@ -10,6 +10,7 @@
 
 #define T_CONST 1000
 #define VERSION 			" ASSISTANT VERTION 1 "
+#define LOG_SYMBOL			"[*] "
 
 #define NOTE_FILE_PATH		"./data/note.txt"
 #define SONG_FILE_PATH		"data/songs.txt"

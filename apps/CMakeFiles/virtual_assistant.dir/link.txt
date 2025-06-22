@@ -1,0 +1,1 @@
+/usr/lib/ccache/c++ CMakeFiles/virtual_assistant.dir/main.cpp.o -o virtual_assistant  ../src/libassistant_object.a ../src/libeye_object.a -lcurses /usr/lib/x86_64-linux-gnu/libform.so -lpthread

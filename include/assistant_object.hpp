@@ -127,15 +127,6 @@ public:
     void Check(void);  
 
     /**
-     * Create new line 
-     * 
-     * @param 
-     * @return
-     * 
-     */
-    void CreateNewLine(void); 
-
-    /**
      * Ask user input again 
      * 
      * @param 

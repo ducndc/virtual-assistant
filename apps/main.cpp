@@ -14,46 +14,34 @@
 #include "assistant_object.hpp"
 #include "eye_object.hpp"
 
-std::atomic<bool> running(true);
+std::atomic<bool> g_running(true);
 
 int main()
 {
-    initscr();            // khởi tạo ncurses
+    initscr();           
     cbreak();
     noecho();
-    curs_set(1);          // hiển thị con trỏ gõ
+    curs_set(1);          
     keypad(stdscr, TRUE);
-
-    int height, width;
+    int height;
+    int width;
     getmaxyx(stdscr, height, width);
-
-    int eye_height = height / 2;
-    int input_height = height - eye_height;
-
-    WINDOW* eye_win = newwin(eye_height, width, 0, 0);
-    WINDOW* input_win = newwin(input_height, width, eye_height, 0);
-
+    int eyeHeight = height / 2;
+    int inputHeight = height - eyeHeight;
+    WINDOW* eyeWin = newwin(eyeHeight, width, 0, 0);
+    WINDOW* inputWin = newwin(inputHeight, width, eyeHeight, 0);
     EyeObject eye;
     AssistantObject assistant;
-
-    eye.Init(eye_win);             // truyền window vào EyeObject
-    assistant.Init(input_win);     // truyền window vào AssistantObject
-
-    // chạy mắt xoay song song
+    eye.Init(eyeWin);            
+    assistant.Init(inputWin);    
     std::thread eye_thread([&]() {
         eye.DisplayEye();
     });
-
-    // chạy giao diện nhập
     assistant.Repeat();
-
-    // khi Repeat kết thúc, dừng mắt xoay
-    running = false;
+    g_running = false;
     eye_thread.join();
-
-    delwin(eye_win);
-    delwin(input_win);
+    delwin(eyeWin);
+    delwin(inputWin);
     endwin();
-
     return 0;
 }

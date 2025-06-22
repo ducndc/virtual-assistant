@@ -1,0 +1,2 @@
+/usr/bin/ar qc libeye_object.a CMakeFiles/eye_object.dir/eye_object.cpp.o
+/usr/bin/ranlib libeye_object.a
