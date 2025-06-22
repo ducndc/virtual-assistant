@@ -13,9 +13,12 @@
 #include "eye_object.hpp"
 #include "parameter.hpp"
 
+extern std::atomic<bool> running;
+
 void 
-EyeObject::Init(void)
+EyeObject::Init(WINDOW* win)
 {
+	m_win = win;
 	m_width = 40; 
 	m_height = 20; 
 	m_pShades = " .:-=+*#%@";
@@ -26,43 +29,43 @@ EyeObject::Init(void)
 void 
 EyeObject::DrawEye(float angleX, float angleY)
 {
+    werase(m_win);
+    box(m_win, 0, 0);
+
     for (int y = 0; y < m_height; y++) 
     {
         float v = (float)y / m_height * 2.0f - 1.0f;
-        for (int x = 0; x < m_width; x++) {
+
+        for (int x = 0; x < m_width; x++) 
+        {
             float u = (float)x / m_width * 2.0f - 1.0f;
             float z2 = m_radius * m_radius - u * u - v * v;
 
             if (z2 < 0) 
             {
-                std::cout << ' ';
+                mvwaddch(m_win, y + 1, x + 1, ' ');
                 continue;
             }
 
             float z = sqrt(z2);
-            float nx = u;
-            float ny = v;
-            float nz = z;
-            float lightX = sin(angleX);
-            float lightY = sin(angleY);
-            float lightZ = -1.0f;
+            float nx = u, ny = v, nz = z;
+            float lightX = sin(angleX), lightY = sin(angleY), lightZ = -1.0f;
             float dot = nx * lightX + ny * lightY + nz * lightZ;
-            int shadeIndex = std::max(0, std::min(9, (int)((dot + 1.0f) * 5)));
-            std::cout << m_pShades[shadeIndex];
+            int shadeIndex = std::clamp((int)((dot + 1.0f) * 5), 0, 9);
+            mvwaddch(m_win, y + 1, x + 1, m_pShades[shadeIndex]);
         }
-
-        std::cout << "\n";
     }
+
+    wrefresh(m_win);
 }
 
 void
 EyeObject::DisplayEye(void)
 {
-	float angle = 0.0f;
-
-    while (true) {
-    	system(CLEAR_SCREEN_CMD);
-        std::cout << "\x1b[H"; // đưa con trỏ về đầu console
+    float angle = 0.0f;
+    
+    while (running) 
+    {
         DrawEye(angle, angle * 0.5f);
         angle += 0.1f;
         std::this_thread::sleep_for(std::chrono::milliseconds(50));

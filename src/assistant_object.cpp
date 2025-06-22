@@ -8,15 +8,22 @@
 #include <termios.h>
 #include <algorithm>
 #include <filesystem>
+#include <atomic> 
 
 #include "assistant_object.hpp"
 #include "parameter.hpp"
 
+extern std::atomic<bool> running;
+
 void 
-AssistantObject::Init(void)
+AssistantObject::Init(WINDOW* win)
 {
-	system(MAKE_DIR_CMD "data");
-	system(CLEAR_SCREEN_CMD);
+	m_win = win;
+	m_terminate = false;
+    box(m_win, 0, 0);
+    mvwprintw(m_win, 0, 2, " Virtual Assistant ");
+    wrefresh(m_win);
+	//system(MAKE_DIR_CMD "data");
 	LoadSetting();
 	LocalClock();
 	DisplayBanner();
@@ -26,8 +33,8 @@ AssistantObject::Init(void)
 void 
 AssistantObject::DisplayBanner(void)
 {
-	system(CLEAR_SCREEN_CMD);
-	std::cout << VERSION;
+	
+	//std::cout << VERSION;
 }
 
 void 
@@ -76,7 +83,7 @@ AssistantObject::SaveSettings(
 void 
 AssistantObject::Greeting(void)
 {
-	std::cout << "\n";
+	//std::cout << "\n";
 	usleep(T_CONST * 300);
 	Speak(m_greet);
 	usleep(T_CONST * 400);
@@ -104,17 +111,18 @@ AssistantObject::Speak(
 
 void 
 AssistantObject::Typing(
-	std::string t)
+	const std::string& message)
 {
-	std::thread th(&AssistantObject::Speak, this, t); //using std::thread for TTS
-
-	for (int i = 0; t[i] != '\0'; i++)
-	{
-		std::cout << t[i] << std::flush;
-		usleep(T_CONST * m_tSpeedOfAssistant); // speed 40ms
-	}
-
-	th.join();//finish std::thread after complete TTS (text to speech)
+	std::thread th(&AssistantObject::Speak, this, message); //using std::thread for TTS
+	wmove(m_win, 10, 10);
+	
+    for (char ch : message) {
+    	waddch(m_win, ch);
+        refresh();
+        napms(50);
+    }
+    
+    th.join();//finish std::thread after complete TTS (text to speech)
 }
 
 std::string 
@@ -152,42 +160,89 @@ AssistantObject::LocalClock(void)
         }
     }
 
-	std::cout << month[l_time->tm_mon];
-	std::cout << " " << l_time->tm_mday << day_no[l_time->tm_mday % 10];
-	std::cout << " " << l_time->tm_year + 1900 ;
+    mvwprintw(m_win, 1, 15, "%s %d %s %d", month[l_time->tm_mon].c_str(), 
+    	l_time->tm_mday, day_no[l_time->tm_mday % 10].c_str(), l_time->tm_year + 1900);
 
 	if ("Monday" == day[l_time->tm_wday])
     {
-		std::cout << " (Sunday)";
+		mvwprintw(m_win, 1, 2, "[*] (Sunday)");
     }
 	else
     {
-		std::cout << " (" << day[l_time->tm_wday - 1] << ")";
+    	mvwprintw(m_win, 1, 2, "[*] %s", day[l_time->tm_wday - 1].c_str());
     }
 
 	m_greet += " ";
 	m_greet += m_userName;
     
-	std::cout << "\n";
-	std::cout << m_greet;
-	std::cout << "\nTime:   " << ( l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12);
-	std::cout << ":" << l_time->tm_min << (l_time->tm_hour < 12 ? "am" : "pm");
+    mvwprintw(m_win, 2, 2, "[*] %s", m_greet.c_str());
+    mvwprintw(m_win, 3, 2, "[*] Time: %dh%dm %s", 
+    	(l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12), 
+    	l_time->tm_min, (l_time->tm_hour < 12 ? "am" : "pm"));
 }
 
 void 
 AssistantObject::Repeat(void)
 {
-	system(CLEAR_SCREEN_CMD);
-	LocalClock();
-	std::cout << " \n\n\n" TYPE_SYMBOL "  ---> ";
-	std::cin.clear();
-	getline(std::cin, m_input);  /*get command from user*/
-    std::transform(m_input.begin(), m_input.end(), m_input.begin(), ::tolower);
-	m_pos = m_input.find(" ");
-	m_mWord = m_input.substr(0, m_pos); /*main command word*/
-	m_lPos = m_input.find('\0');
-	m_sWord = m_input.substr(m_pos + 1, m_lPos); /*rest word*/
-	Check();
+    char input[128] = {0};
+    int max_y, max_x;
+    getmaxyx(m_win, max_y, max_x);
+
+    int input_row = max_y - 2;
+
+    while (running) 
+    {
+        box(m_win, 0, 0);
+        mvwprintw(m_win, 0, 2, " Virtual Assistant ");
+        LocalClock();
+		char input[128] = {0};
+		int pos = 0;
+		mvwhline(m_win, input_row, 1, ' ', max_x - 2);
+		mvwprintw(m_win, input_row, 2, "[*] Type: ---> ");
+		wmove(m_win, input_row, 4);
+		wrefresh(m_win);
+		int ch;
+
+		if (m_terminate)
+			break;
+
+		while (true) 
+		{
+		    ch = wgetch(m_win);
+
+		    if (ch == '\n') 
+		    {
+		        input[pos] = '\0';
+		        break;
+		    } 
+		    else if ((ch == KEY_BACKSPACE || ch == 127 || ch == 8) && pos > 0) 
+		    {
+		        pos--;
+		        input[pos] = '\0';
+		        mvwaddch(m_win, input_row, 18 + pos, ' ');
+		        wmove(m_win, input_row, 18 + pos);
+		    } 
+		    else if (isprint(ch) && pos < sizeof(input) - 1) 
+		    {
+		        input[pos++] = ch;
+		        mvwaddch(m_win, input_row, 18 + pos - 1, ch);
+		    }
+
+		    wrefresh(m_win);
+		}
+
+        m_input = input;
+        std::transform(m_input.begin(), m_input.end(), m_input.begin(), ::tolower);
+        m_pos = m_input.find(" ");
+        m_mWord = m_input.substr(0, m_pos);
+        m_lPos = m_input.find('\0');
+        m_sWord = m_input.substr(m_pos + 1, m_lPos);
+        refresh();
+        Check();
+    }
+
+    if (m_terminate)
+    	return;
 }
 
 void 
@@ -212,21 +267,21 @@ AssistantObject::Check(void)
 	}
 	else if (("update" == m_mWord) || ("updating" == m_mWord))
 	{
-		system(CLEAR_SCREEN_CMD);
-		CreateNewLine();
+		
+		
 		Typing("Updating the song list...");
 		usleep(T_CONST * 100);
-		system(CLEAR_SCREEN_CMD);
-		CreateNewLine();
+		
+		
 		Typing("Please wait");
 		UpdateSong("punjabi");
 		UpdateSong("english");
 		UpdateSong("hindi");
 		UpdateSong("others");
-		system(CLEAR_SCREEN_CMD);
+		
 		remove("data/songs.txt");
 		rename(TEMP_FILE_PATH, "data/songs.txt");
-		CreateNewLine();
+		
 		Typing("All songs are updated in the file");
 	}
 	else if (("exit" == m_input) || ("q" == m_input) || ("quit" == m_input))
@@ -235,14 +290,15 @@ AssistantObject::Check(void)
 		usleep(T_CONST * 600);
 		Typing("Created By : " AUTHOR);
 		usleep(T_CONST * 1000);
-		system(CLEAR_SCREEN_CMD);
-		exit(1);
+		m_terminate = true;
+		
+		//exit(1);
 	}
 	else if (("find ip" == m_input) || ("find my ip" == m_input) || ("ip" == m_mWord))
 	{
 		Typing("Finding your IP address");
 		system(IFCONFIG_CMD);
-		WaitOut();
+		//WaitOut();
 	}
 	else if (("shutdown" == m_mWord) || ("restart" == m_mWord))
 	{
@@ -269,13 +325,7 @@ AssistantObject::Check(void)
 			("who created you?" == m_input) || 
 			("who made you?" == m_input))
 		{
-			Typing("I am VA, a virtual assistant");
-			usleep(T_CONST * 300);
-			CreateNewLine();
-			Typing("I was created on 16 June ,2023");
-			usleep(T_CONST * 300);
-			CreateNewLine();
-			WaitOut();
+			Typing("I am VA, a virtual assistant, I was created on 16 June ,2023");
 		}
 		else
         {
@@ -297,11 +347,11 @@ AssistantObject::Check(void)
 		Install("english");
 		Install("punjabi");
 		Install("others");
-		std::cout << "\nCreating folders...";
+		//std::cout << "\nCreating folders...";
 		usleep(T_CONST * 200);
-		std::cout << "\nCreating files...";
+		//std::cout << "\nCreating files...";
 		usleep(T_CONST * 200);
-		system(CLEAR_SCREEN_CMD);
+		
 
 		Typing("\nAll files are installed");
 		usleep(T_CONST * 300);
@@ -378,7 +428,7 @@ AssistantObject::Check(void)
 	}
 
 	usleep(T_CONST * 700);
-	Repeat();
+	//Repeat();
 }
 
 void 
@@ -386,18 +436,18 @@ AssistantObject::Settings(void)
 {
 	std::string un;
 	int ss, sa, sp, ts;
-	std::cout << "\n\n";
+	//std::cout << "\n\n";
 	Typing("Enter data in the following given format:\n");
-	std::cout << "\n1.user name(single word only)";
-	std::cout << "\n2.speak speed(in WPM)";
-	std::cout << "\n3.speak volume(0-200)";
-	std::cout << "\n4.speak pitch(0-99)";
-	std::cout << "\n5.typing speed(in ms)";
-	std::cout << "\n\nExample 1:\n";
-	std::cout << "Duc 160 100 40 40";
-	std::cout << "\n\nExample 2:\n";
-	std::cout << "Duc 150 120 60 30";
-	std::cout << "\n\n\n---> ";
+	//std::cout << "\n1.user name(single word only)";
+	//std::cout << "\n2.speak speed(in WPM)";
+	//std::cout << "\n3.speak volume(0-200)";
+	//std::cout << "\n4.speak pitch(0-99)";
+	//std::cout << "\n5.typing speed(in ms)";
+	//std::cout << "\n\nExample 1:\n";
+	//std::cout << "Duc 160 100 40 40";
+	//std::cout << "\n\nExample 2:\n";
+	//std::cout << "Duc 150 120 60 30";
+	//std::cout << "\n\n\n---> ";
 	std::cin >> un >> ss >> sa >> sp >> ts;
 
 	if ((sa <= 200 && sa > 0) && (sp <= 99 && sp > 0 ))
@@ -442,7 +492,7 @@ AssistantObject::PlaySong(
 	}
 
 	usleep(T_CONST * 150);
-	system(CLEAR_SCREEN_CMD);
+	
 
 	if (song != item)
 	{
@@ -452,10 +502,10 @@ AssistantObject::PlaySong(
 		if (m_sCount % 3 == 0)
 		{
 			usleep(T_CONST * 200);
-			system(CLEAR_SCREEN_CMD);
+			
 			Speak("But you can download the song by using the command");
 			usleep(T_CONST * 1300);
-			CreateNewLine();
+			
 			Typing("song ");
 			Typing(song_name);
 		}
@@ -485,7 +535,7 @@ AssistantObject::UpdateSong(
 {
 	std::fstream a, b;
 	char word[20], old[20];
-	system(CLEAR_SCREEN_CMD);
+	
 	a.open(MY_BEAT_FOLDER + name + LIST_FILE_PATH);
 	b.open(TEMP_FILE_PATH, std::ios::app | std::ios::ate);
 
@@ -505,15 +555,15 @@ AssistantObject::DisplayClock(
 	int h, m;
 	h = m = 0;
 
-	system(CLEAR_SCREEN_CMD);
-	std::cout << "\n\n";
-	std::cout << std::setfill(' ') << std::setw(75) << "	        TIMER	      	\n";
-	std::cout << std::setfill(' ') << std::setw(75) << " --------------------------\n";
-	std::cout << std::setfill(' ') << std::setw(29);
-	std::cout << "| " << std::setfill('0') << std::setw(2) << h << " hrs | ";
-	std::cout << std::setfill('0') << std::setw(2) << m << " min | ";
-	std::cout << std::setfill('0') << std::setw(2) << seconds << " sec |" << std::endl;
-	std::cout << std::setfill(' ') << std::setw(75) << " --------------------------\n";
+	
+	//std::cout << "\n\n";
+	//std::cout << std::setfill(' ') << std::setw(75) << "	        TIMER	      	\n";
+	//std::cout << std::setfill(' ') << std::setw(75) << " --------------------------\n";
+	//std::cout << std::setfill(' ') << std::setw(29);
+	//std::cout << "| " << std::setfill('0') << std::setw(2) << h << " hrs | ";
+	//std::cout << std::setfill('0') << std::setw(2) << m << " min | ";
+	//std::cout << std::setfill('0') << std::setw(2) << seconds << " sec |" << std::endl;
+	//std::cout << std::setfill(' ') << std::setw(75) << " --------------------------\n";
 }
 
 void 
@@ -540,22 +590,22 @@ AssistantObject::SearchKeyWord(
 	}
 
 	usleep(T_CONST * 200);
-	system(CLEAR_SCREEN_CMD);
-	CreateNewLine();
+	
+	
 	Typing("Cheking internet connection...");
 
 	if (m_sCount % 5 == 0)
 	{
-		CreateNewLine();
+		
 		usleep(T_CONST * 90);
-		std::cout << "Colleting information..\n";
+		//std::cout << "Colleting information..\n";
 		usleep(T_CONST * 50);
-		std::cout << "securing the data..\n";
+		//std::cout << "securing the data..\n";
 		usleep(T_CONST * 30);
-		std::cout << "clear the cookies..\n";
+		//std::cout << "clear the cookies..\n";
 		usleep(T_CONST * 100);
 		system(IFCONFIG_CMD);
-		CreateNewLine();
+		
 		Typing("All protocols are secured...");
 	}
 
@@ -599,7 +649,7 @@ AssistantObject::SearchKeyWord(
 void 
 AssistantObject::CreateNewLine(void)
 {
-	std::cout << "\n";
+	//std::cout << "\n";
 }
 
 void 
@@ -631,10 +681,10 @@ AssistantObject::ShowSongLists(
 	while (file >> word >> old)
 	{
 		count++;
-		std::cout << word << "\n";
+		//std::cout << word << "\n";
 	}
 
-	std::cout << "\n\t\tTotal songs available :" << count << std::endl;
+	//std::cout << "\n\t\tTotal songs available :" << count << std::endl;
 	std::string p, s = "Only ";
 	p = count;
 	s += p;
@@ -651,28 +701,28 @@ AssistantObject::ShowSongLists(
 void 
 AssistantObject::Hacking(void)
 {
-	system(CLEAR_SCREEN_CMD);
+	
 	Speak("You are Welcome in the Hacking Lab");
-	std::cout << std::setfill(' ') << std::setw(50) << "      ________       \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << "      ________       \n";
 	usleep(T_CONST * 100);
-	std::cout << std::setfill(' ') << std::setw(50) << "     |        |      \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << "     |        |      \n";
 	usleep(T_CONST * 100);
-	std::cout << std::setfill(' ') << std::setw(50) << "     |  #   # |      \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << "     |  #   # |      \n";
 	usleep(T_CONST * 100);
-	std::cout << std::setfill(' ') << std::setw(50) << "     |  #   # |      \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << "     |  #   # |      \n";
 	usleep(T_CONST * 100);
-	std::cout << std::setfill(' ') << std::setw(50) << "     |   # #  |      \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << "     |   # #  |      \n";
 	usleep(T_CONST * 100);
-	std::cout << std::setfill(' ') << std::setw(50) << "     |    #   |      \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << "     |    #   |      \n";
 	usleep(T_CONST * 100);
-	std::cout << std::setfill(' ') << std::setw(50) << "     |________|      \n";
-	CreateNewLine();
+	//std::cout << std::setfill(' ') << std::setw(50) << "     |________|      \n";
+	
 	usleep(T_CONST * 1000);
-	std::cout << std::setfill(' ') << std::setw(50) << " Duc Hacking Lab  \n";
+	//std::cout << std::setfill(' ') << std::setw(50) << " Duc Hacking Lab  \n";
 	usleep(T_CONST * 1000);
-	CreateNewLine();
+	
 	Typing("Still in development...");
-	WaitOut();
+	//WaitOut();
 }
 
 void 
@@ -719,28 +769,28 @@ void
 AssistantObject::Help(void)
 {
 	m_count = 0;
-	system(CLEAR_SCREEN_CMD);
-	CreateNewLine();
-	std::cout << "-----------------------------\n";
-	std::cout << "           Commands          \n";
-	std::cout << "-----------------------------\n";
-	std::cout << "    1.search (any question)  \n";
-	std::cout << "    2.open (google,mozilla)  \n";
-	std::cout << "    3.block (website name)   \n";
-	std::cout << "    4.song (song name)       \n";
-	std::cout << "    5.update                 \n";
-	std::cout << "    6.watch (videoname)      \n";
-	std::cout << "    7.pdf (pdfname)          \n";
-	std::cout << "    8.movie (moviename)      \n";
-	std::cout << "    9.what/how/where/who/why (question)\n";
-	std::cout << "   10.cmd (cmd commands)     \n";
-	std::cout << "   11.find my ip             \n";
-	std::cout << "   12.play (song name)       \n";
-	std::cout << "   13.list songs             \n";
-	std::cout << "   10.exit/quit/q            \n";
-	std::cout << "   11.shutdown/restart       \n";
-	std::cout << "   12.install                \n";
-	std::cout << "   13.note                   \n";
+	
+	
+	//std::cout << "-----------------------------\n";
+	//std::cout << "           Commands          \n";
+	//std::cout << "-----------------------------\n";
+	//std::cout << "    1.search (any question)  \n";
+	//std::cout << "    2.open (google,mozilla)  \n";
+	//std::cout << "    3.block (website name)   \n";
+	//std::cout << "    4.song (song name)       \n";
+	//std::cout << "    5.update                 \n";
+	//std::cout << "    6.watch (videoname)      \n";
+	//std::cout << "    7.pdf (pdfname)          \n";
+	//std::cout << "    8.movie (moviename)      \n";
+	//std::cout << "    9.what/how/where/who/why (question)\n";
+	//std::cout << "   10.cmd (cmd commands)     \n";
+	//std::cout << "   11.find my ip             \n";
+	//std::cout << "   12.play (song name)       \n";
+	//std::cout << "   13.list songs             \n";
+	//std::cout << "   10.exit/quit/q            \n";
+	//std::cout << "   11.shutdown/restart       \n";
+	//std::cout << "   12.install                \n";
+	//std::cout << "   13.note                   \n";
 	WaitOut();
 }
 
@@ -762,7 +812,7 @@ void
 AssistantObject::WaitOut(void)
 {
 	char wait;
-	std::cout << "   Enter q to continue" << std::endl;
+	//std::cout << "   Enter q to continue" << std::endl;
 	do {
 		wait = GetHiddenInput();
 	    usleep(T_CONST * 100);

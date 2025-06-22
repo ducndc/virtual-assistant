@@ -18,6 +18,8 @@
 #include <ctype.h>
 #include <ctime>
 #include <thread>
+#include <ncurses.h>
+#include <algorithm>
 
 class AssistantObject {
 private:
@@ -31,12 +33,16 @@ private:
     int m_count = 0;
     int m_sCount = 0;
 
+    bool m_terminate;
+    
     std::string m_mWord;
     std::string m_sWord;
     std::string m_input;
 
     std::string m_userName;
     std::string m_greet;
+
+    WINDOW* m_win;
 
 public:
     /**
@@ -45,7 +51,7 @@ public:
      * @param:
      * @return
     */
-    void Init(void);
+    void Init(WINDOW* win);
 
     /**
      * @brief Load paramaters form file
@@ -85,7 +91,7 @@ public:
      * @param:
      * @return
     */
-    void Typing(std::string);
+    void Typing(const std::string& message);
 
     /**
      * Convert text to speech

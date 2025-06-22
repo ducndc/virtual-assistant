@@ -8,6 +8,10 @@
 #ifndef EYE_OBJECT_H
 #define EYE_OBJECT_H
 
+#include <ncurses.h>
+#include <atomic> 
+#include <algorithm>
+
 class EyeObject {
 private:
 	const char *m_pShades;
@@ -18,13 +22,14 @@ private:
     float m_angle;
     float m_radius;
 
+    WINDOW* m_win;
+
 public:
-	void Init(void);
+	void Init(WINDOW* win);
 
 	void DrawEye(float angleX, float angleY);
 
 	void DisplayEye(void);
-
 };
 
 #endif /* END EYE_OBJECT_H */

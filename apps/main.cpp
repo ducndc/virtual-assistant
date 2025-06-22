@@ -18,20 +18,42 @@ std::atomic<bool> running(true);
 
 int main()
 {
-    AssistantObject assistantFriend;
+    initscr();            // khởi tạo ncurses
+    cbreak();
+    noecho();
+    curs_set(1);          // hiển thị con trỏ gõ
+    keypad(stdscr, TRUE);
+
+    int height, width;
+    getmaxyx(stdscr, height, width);
+
+    int eye_height = height / 2;
+    int input_height = height - eye_height;
+
+    WINDOW* eye_win = newwin(eye_height, width, 0, 0);
+    WINDOW* input_win = newwin(input_height, width, eye_height, 0);
+
     EyeObject eye;
-    
-    eye.Init();
-    std::thread eyeThread([&]() {
-        eye.DisplayEye();  // chạy song song
+    AssistantObject assistant;
+
+    eye.Init(eye_win);             // truyền window vào EyeObject
+    assistant.Init(input_win);     // truyền window vào AssistantObject
+
+    // chạy mắt xoay song song
+    std::thread eye_thread([&]() {
+        eye.DisplayEye();
     });
 
-    assistantFriend.Init();
-    assistantFriend.Repeat();
+    // chạy giao diện nhập
+    assistant.Repeat();
 
-    // khi Repeat() kết thúc, dừng chương trình
+    // khi Repeat kết thúc, dừng mắt xoay
     running = false;
-    eyeThread.join();
+    eye_thread.join();
+
+    delwin(eye_win);
+    delwin(input_win);
+    endwin();
 
     return 0;
 }

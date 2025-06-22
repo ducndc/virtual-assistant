@@ -5,6 +5,10 @@
 # file(GLOB HEADER_LIST CONFIGURE_DEPENDS "${ModernCMakeExample_SOURCE_DIR}/include/modern/*.hpp")
 # set(HEADER_LIST "../include/*.hpp")
 
+find_package(Curses REQUIRED)
+
+include_directories(${CURSES_INCLUDE_DIR})
+
 file(GLOB HEADER_FILES "../include/*.hpp")
 # Make an automatic library - will be static or dynamic based on user setting
 file(GLOB SOURCE_FILES "../src/*.cpp")
@@ -15,6 +19,9 @@ add_library(eye_object eye_object.cpp ${HEADER_FILES})
 # We need this directory, and users of our library will need it too
 target_include_directories(assistant_object PUBLIC ../include)
 target_include_directories(eye_object PUBLIC ../include)
+
+target_link_libraries(assistant_object ${CURSES_LIBRARIES} pthread)
+target_link_libraries(eye_object ${CURSES_LIBRARIES} pthread)
 
 # This depends on (header only) boost
 #target_link_libraries(modern_library PRIVATE Boost::boost)
