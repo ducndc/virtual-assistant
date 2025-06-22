@@ -23,7 +23,6 @@ AssistantObject::Init(WINDOW* win)
     box(m_win, 0, 0);
     mvwprintw(m_win, 0, 2, VERSION);
     wrefresh(m_win);
-	system(MAKE_DIR_CMD "data");
 	LoadSetting();
 	LocalClock();
 	Greeting();
