@@ -9,8 +9,8 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "assistant_object.h"
-#include "parameter.h"
+#include "assistant_object.hpp"
+#include "parameter.hpp"
 
 void 
 AssistantObject::Init(void)
