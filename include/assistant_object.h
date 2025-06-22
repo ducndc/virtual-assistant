@@ -269,6 +269,14 @@ public:
      * @return
      */
     void Note(void);
+
+    /**
+     * Wait for quiting
+     * 
+     * @param 
+     * @return
+     */
+    void WaitOut(void);
 };
 
 #endif /* ASSISTANT_OBJECT_H */

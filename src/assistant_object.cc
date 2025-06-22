@@ -242,6 +242,7 @@ AssistantObject::Check(void)
 	{
 		Typing("Finding your IP address");
 		system(IFCONFIG_CMD);
+		WaitOut();
 	}
 	else if (("shutdown" == m_mWord) || ("restart" == m_mWord))
 	{
@@ -273,6 +274,8 @@ AssistantObject::Check(void)
 			CreateNewLine();
 			Typing("I was created on 16 June ,2023");
 			usleep(T_CONST * 300);
+			CreateNewLine();
+			WaitOut();
 		}
 		else
         {
@@ -580,7 +583,6 @@ AssistantObject::SearchKeyWord(
 
 		url = XDG_OPEN_CMD "https://www.google.com/search?q=";
 		url += query;
-		url += "+djpunjab";
 		system(std::string(url).c_str());
 		usleep(T_CONST * 50);
 	}
@@ -670,6 +672,7 @@ AssistantObject::Hacking(void)
 	usleep(T_CONST * 1000);
 	CreateNewLine();
 	Typing("Still in development...");
+	WaitOut();
 }
 
 void 
@@ -716,7 +719,6 @@ void
 AssistantObject::Help(void)
 {
 	m_count = 0;
-	char wait;
 	system(CLEAR_SCREEN_CMD);
 	CreateNewLine();
 	std::cout << "-----------------------------\n";
@@ -739,12 +741,7 @@ AssistantObject::Help(void)
 	std::cout << "   11.shutdown/restart       \n";
 	std::cout << "   12.install                \n";
 	std::cout << "   13.note                   \n";
-	std::cout << "   Enter q to continue" << std::endl;
-
-	do {
-		wait = GetHiddenInput();
-	    usleep(T_CONST * 100);
-	} while (wait != QUIT_KEY);
+	WaitOut();
 }
 
 char 
@@ -759,4 +756,15 @@ AssistantObject::GetHiddenInput(void)
     read(STDIN_FILENO, &ch, 1);
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return ch;
+}
+
+void 
+AssistantObject::WaitOut(void)
+{
+	char wait;
+	std::cout << "   Enter q to continue" << std::endl;
+	do {
+		wait = GetHiddenInput();
+	    usleep(T_CONST * 100);
+	} while (wait != QUIT_KEY);
 }
