@@ -9,7 +9,8 @@
 #define PARAMATER_H
 
 #define T_CONST 1000
-#define VERSION 			" ASSISTANT VERTION 1 "
+#define VERSION 			" VERTION 1.0.1 "
+#define NAME_PROGRAM		"Virtual Assistant"
 #define LOG_SYMBOL			"[*] "
 
 #define NOTE_FILE_PATH		"./data/note.txt"
@@ -24,13 +25,14 @@
 #define CLEAR_SCREEN_CMD	"clear "
 #define MAKE_DIR_CMD		"mkdir "
 #define CREATE_FILE_CMD		"touch "
-#define VIM_CMD				"vim "
+#define VIM_CMD				"gnome-terminal -- bash -c 'vim " NOTE_FILE_PATH "; exec bash' "
 #define XDG_OPEN_CMD		"xdg-open "
 #define SHUTDOWN_CMD		"shutdown "
 #define RESTART_CMD			"restart "
 #define CHORME_CMD			"chrome "
 #define FIREFOX_CMD			"firefox"
-#define IFCONFIG_CMD		"ifconfig"
+#define IFCONFIG_CMD		"ifconfig > /dev/null 2>&1"
+#define NULL_OUTPUT			"> /dev/null 2>&1"
 
 #define ESPEAK_CMD			"espeak -v mb-us1 "
 

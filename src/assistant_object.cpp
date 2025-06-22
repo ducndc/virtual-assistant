@@ -21,20 +21,18 @@ AssistantObject::Init(WINDOW* win)
 	m_win = win;
 	m_terminate = false;
     box(m_win, 0, 0);
-    mvwprintw(m_win, 0, 2, " Virtual Assistant ");
+    mvwprintw(m_win, 0, 2, VERSION);
     wrefresh(m_win);
 	system(MAKE_DIR_CMD "data");
 	LoadSetting();
 	LocalClock();
-	DisplayBanner();
 	Greeting();
 }
 
 void 
 AssistantObject::DisplayBanner(void)
 {
-	
-	//std::cout << VERSION;
+	mvwprintw(m_win, 6, 1, LOG_SYMBOL VERSION);
 }
 
 void 
@@ -192,7 +190,7 @@ AssistantObject::Repeat(void)
     while (g_running) 
     {
         box(m_win, 0, 0);
-        mvwprintw(m_win, 0, 2, " Virtual Assistant ");
+        mvwprintw(m_win, 0, 2, NAME_PROGRAM VERSION);
         LocalClock();
 		char input[128] = {0};
 		int pos = 0;
@@ -266,18 +264,13 @@ AssistantObject::Check(void)
 	}
 	else if (("update" == m_mWord) || ("updating" == m_mWord))
 	{
-		
-		
 		Typing("Updating the song list...");
 		usleep(T_CONST * 100);
-		
-		
 		Typing("Please wait");
 		UpdateSong("punjabi");
 		UpdateSong("english");
 		UpdateSong("hindi");
 		UpdateSong("others");
-		
 		remove("data/songs.txt");
 		rename(TEMP_FILE_PATH, "data/songs.txt");
 		
@@ -290,14 +283,11 @@ AssistantObject::Check(void)
 		Typing("Created By : " AUTHOR);
 		usleep(T_CONST * 1000);
 		m_terminate = true;
-		
-		//exit(1);
 	}
 	else if (("find ip" == m_input) || ("find my ip" == m_input) || ("ip" == m_mWord))
 	{
 		Typing("Finding your IP address");
 		system(IFCONFIG_CMD);
-		//WaitOut();
 	}
 	else if (("shutdown" == m_mWord) || ("restart" == m_mWord))
 	{
@@ -346,12 +336,8 @@ AssistantObject::Check(void)
 		Install("english");
 		Install("punjabi");
 		Install("others");
-		//std::cout << "\nCreating folders...";
 		usleep(T_CONST * 200);
-		//std::cout << "\nCreating files...";
 		usleep(T_CONST * 200);
-		
-
 		Typing("\nAll files are installed");
 		usleep(T_CONST * 300);
 	}
@@ -553,7 +539,6 @@ AssistantObject::DisplayClock(
 {
 	int h, m;
 	h = m = 0;
-
 	
 	//std::cout << "\n\n";
 	//std::cout << std::setfill(' ') << std::setw(75) << "	        TIMER	      	\n";
@@ -589,22 +574,15 @@ AssistantObject::SearchKeyWord(
 	}
 
 	usleep(T_CONST * 200);
-	
-	
 	Typing("Cheking internet connection...");
 
 	if (m_sCount % 5 == 0)
 	{
 		
 		usleep(T_CONST * 90);
-		//std::cout << "Colleting information..\n";
+		Typing("Colleting information...");
 		usleep(T_CONST * 50);
-		//std::cout << "securing the data..\n";
-		usleep(T_CONST * 30);
-		//std::cout << "clear the cookies..\n";
-		usleep(T_CONST * 100);
 		system(IFCONFIG_CMD);
-		
 		Typing("All protocols are secured...");
 	}
 
@@ -616,22 +594,19 @@ AssistantObject::SearchKeyWord(
 	{
 		url = "xdg-open https://www.youtube.com/results?search_query=";
 		url += query;
+		url += NULL_OUTPUT;
 		system(std::string(url).c_str());
 	}
 	else if ("song" == extra)
 	{
-		// for international songs
-		url = XDG_OPEN_CMD "https://en.muzmo.org/search?q=";
-		url += query;
-		system(std::string(url).c_str());
-		usleep(T_CONST * 50);
-
 		url = XDG_OPEN_CMD "https://m.soundcloud.com/search?q=";
 		url += query;
+		url += NULL_OUTPUT;
 		system(std::string(url).c_str());
 
 		url = XDG_OPEN_CMD "https://www.google.com/search?q=";
 		url += query;
+		url += NULL_OUTPUT;
 		system(std::string(url).c_str());
 		usleep(T_CONST * 50);
 	}
@@ -639,6 +614,7 @@ AssistantObject::SearchKeyWord(
 	{
 		url = XDG_OPEN_CMD "https://www.google.com/search?q=";
 		url += query;
+		url += NULL_OUTPUT;
 		system(std::string(url).c_str());
 	}
 
@@ -674,10 +650,8 @@ AssistantObject::ShowSongLists(
 	while (file >> word >> old)
 	{
 		count++;
-		//std::cout << word << "\n";
 	}
 
-	//std::cout << "\n\t\tTotal songs available :" << count << std::endl;
 	std::string p, s = "Only ";
 	p = count;
 	s += p;
@@ -732,7 +706,7 @@ AssistantObject::BlockWebsite(
 void 
 AssistantObject::Note(void)
 {
-	std::string cmd = VIM_CMD NOTE_FILE_PATH; 
+	std::string cmd = VIM_CMD; 
 
 	if (std::filesystem::exists(NOTE_FILE_PATH)) 
 	{
@@ -762,8 +736,6 @@ void
 AssistantObject::Help(void)
 {
 	m_count = 0;
-	
-	
 	//std::cout << "-----------------------------\n";
 	//std::cout << "           Commands          \n";
 	//std::cout << "-----------------------------\n";
@@ -805,7 +777,7 @@ void
 AssistantObject::WaitOut(void)
 {
 	char wait;
-	//std::cout << "   Enter q to continue" << std::endl;
+
 	do {
 		wait = GetHiddenInput();
 	    usleep(T_CONST * 100);
