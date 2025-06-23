@@ -9,8 +9,8 @@
 #define PARAMATER_H
 
 #define T_CONST 1000
-#define VERSION 			" VERTION 1.0.1 "
-#define NAME_PROGRAM		"Virtual Assistant"
+#define VERSION 			" Version 1.0.1 "
+#define NAME_PROGRAM		" Virtual Assistant"
 #define LOG_SYMBOL			"[*] "
 
 #define NOTE_FILE_PATH		"./data/note.txt"
