@@ -9,6 +9,9 @@
 #include <algorithm>
 #include <filesystem>
 #include <atomic> 
+#include <ncurses.h>
+#include <vector>
+#include <string>
 
 #include "assistant_object.hpp"
 #include "parameter.hpp"
@@ -110,6 +113,8 @@ AssistantObject::Typing(
 	const std::string& message)
 {
 	std::thread th(&AssistantObject::Speak, this, message); //using std::thread for TTS
+	werase(m_win);           
+    box(m_win, 0, 0);        
 	wmove(m_win, 10, 10);
 	
     for (char ch : message) {
@@ -117,6 +122,8 @@ AssistantObject::Typing(
         refresh();
         napms(50);
     }
+
+    wrefresh(m_win);
     
     th.join();//finish std::thread after complete TTS (text to speech)
 }
@@ -734,41 +741,37 @@ AssistantObject::OpenFile(
 void 
 AssistantObject::Help(void)
 {
-	m_count = 0;
-	int i = 4;
-	mvwprintw(m_win, i, 10, "1.search (any question)");
-	i++;
-	mvwprintw(m_win, i, 10, "2.open (google,mozilla)");
-	i++;
-	mvwprintw(m_win, i, 10, "3.block (website name)");
-	i++;
-	mvwprintw(m_win, i, 10, "4.song (song name)");
-	i++;
-	mvwprintw(m_win, i, 10, "5.update");
-	i++;
-	mvwprintw(m_win, i, 10, "6.watch (videoname)");
-	i++;
-	mvwprintw(m_win, i, 10, "7.pdf (pdfname)");
-	i++;
-	mvwprintw(m_win, i, 10, "8.movie (moviename)");
-	i++;
-	mvwprintw(m_win, i, 10, "9.what/how/where/who/why (question)");
-	i++;
-	mvwprintw(m_win, i, 10, "10.cmd (cmd commands)");
-	i++;
-	mvwprintw(m_win, i, 10, "11.find my ip");
-	i++;
-	mvwprintw(m_win, i, 10, "12.play (song name)");
-	i++;
-	mvwprintw(m_win, i, 10, "13.list songs");
-	i++;
-	mvwprintw(m_win, i, 10, "14.exit/quit/q");
-	i++;
-	mvwprintw(m_win, i, 10, "15.shutdown/restart");
-	i++;
-	mvwprintw(m_win, i, 10, "16.install");
-	i++;
-	mvwprintw(m_win, i, 10, "17.note");
+    m_count = 0;
+    int row = 4;
+    std::vector<std::string> commands = {
+        "1. search (any question)",
+        "2. open (google,mozilla)",
+        "3. block (website name)",
+        "4. song (song name)",
+        "5. update",
+        "6. watch (videoname)",
+        "7. pdf (pdfname)",
+        "8. movie (moviename)",
+        "9. what/how/where/who/why (question)",
+        "10. cmd (cmd commands)",
+        "11. find my ip",
+        "12. play (song name)",
+        "13. list songs",
+        "14. exit/quit/q",
+        "15. shutdown/restart",
+        "16. install",
+        "17. note"
+    };
+
+    werase(m_win);           
+    box(m_win, 0, 0);        
+
+    for (const auto& cmd : commands) 
+    {
+        mvwprintw(m_win, row++, 10, "%s", cmd.c_str());
+    }
+
+    wrefresh(m_win);         // Cập nhật hiển thị
 }
 
 char 
