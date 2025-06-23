@@ -124,7 +124,7 @@ AssistantObject::Typing(
     }
 
     wrefresh(m_win);
-    
+
     th.join();//finish std::thread after complete TTS (text to speech)
 }
 
@@ -181,7 +181,7 @@ AssistantObject::LocalClock(void)
     mvwprintw(m_win, 2, 2, LOG_SYMBOL "%s", m_greet.c_str());
     mvwprintw(m_win, 3, 2, LOG_SYMBOL "Time: %dh%dm %s", 
     	(l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12), 
-    	l_time->tm_min, (l_time->tm_hour < 12 ? "am" : "pm"));
+    	l_time->tm_min, (l_time->tm_hour < 12 ? AM_SYMBOL : PM_SYMBOL));
 }
 
 void 
@@ -201,7 +201,7 @@ AssistantObject::Repeat(void)
 		char input[128] = {0};
 		int pos = 0;
 		mvwhline(m_win, input_row, 1, ' ', max_x - 2);
-		mvwprintw(m_win, input_row, 2, LOG_SYMBOL "Type: ---> ");
+		mvwprintw(m_win, input_row, 2, LOG_SYMBOL INPUT_SYMBOL);
 		wmove(m_win, input_row, 4);
 		wrefresh(m_win);
 		int ch;
@@ -251,15 +251,15 @@ AssistantObject::Repeat(void)
 void 
 AssistantObject::Check(void)
 {
-	if (("hi" == m_mWord) || ("hey" == m_mWord) || 
-		("hello" == m_mWord) || ("hlo" == m_mWord))
+	if ((HI_STR == m_mWord) || (HEY_STR == m_mWord) || 
+		(HELLO_STR == m_mWord) || (HLO_STR == m_mWord))
 	{
 		Typing("Hi " + m_userName + ", how can I help you..");
 	}
-	else if ("play" == m_mWord)
+	else if (PLAY_STR == m_mWord)
 	{
-		if (("play" == m_input) || ("play " == m_input) || 
-			(" " == m_sWord) || ("  " == m_sWord) || ("   " == m_sWord))
+		if ((PLAY_STR == m_input) || (PLAY_STR_1 == m_input) || 
+			(SPACE_STR == m_sWord) || (SPACE_STR_1 == m_sWord) || (SPACE_STR_2 == m_sWord))
 		{
 			Speak("Sorry " + m_userName + " ,you does not enter song name");
 		}
@@ -268,7 +268,7 @@ AssistantObject::Check(void)
 			PlaySong(m_sWord);
 		}
 	}
-	else if (("update" == m_mWord) || ("updating" == m_mWord))
+	else if ((UPDATE_STR == m_mWord) || (UPDATING_STR == m_mWord))
 	{
 		Typing("Updating the song list...");
 		usleep(T_CONST * 100);
@@ -282,7 +282,7 @@ AssistantObject::Check(void)
 		
 		Typing("All songs are updated in the file");
 	}
-	else if (("exit" == m_input) || ("q" == m_input) || ("quit" == m_input))
+	else if ((EXIT_STR == m_input) || (Q_STR == m_input) || (QUIT_STR == m_input))
 	{
 		Speak("Good bye," + m_userName);
 		usleep(T_CONST * 600);
@@ -290,27 +290,27 @@ AssistantObject::Check(void)
 		usleep(T_CONST * 1000);
 		m_terminate = true;
 	}
-	else if (("find ip" == m_input) || ("find my ip" == m_input) || ("ip" == m_mWord))
+	else if ((FIND_IP_STR == m_input) || (FIND_MY_IP_STR == m_input) || (IP_STR == m_mWord))
 	{
 		Typing("Finding your IP address");
 		system(IFCONFIG_CMD);
 	}
-	else if (("shutdown" == m_mWord) || ("restart" == m_mWord))
+	else if ((SHUTDOWN_STR == m_mWord) || (RESTART_STR == m_mWord))
 	{
 		Typing("Your Pc will ");
 		Typing(m_mWord);
 		ShutdownTimer(5);
 		Speak("Now , I am going to sleep");
-		if ("shutdown" == m_mWord)
+		if (SHUTDOWN_STR == m_mWord)
 			system(SHUTDOWN_CMD);
 		else
 			system(RESTART_CMD);
 		usleep(T_CONST * 10);
 		exit(1);
 	}
-	else if (("what" == m_mWord) || ("who" == m_mWord) || 
-		("how" == m_mWord) || ("when" == m_mWord) || 
-		("where" == m_mWord) || ("why" == m_mWord))
+	else if ((WHAT_STR == m_mWord) || (WHO_STR == m_mWord) || 
+		(HOW_STR == m_mWord) || (WHEN_STR == m_mWord) || 
+		(WHERE_STR == m_mWord) || (WHY_STR == m_mWord))
 	{
 		if (m_input == "what is your name")
 		{
