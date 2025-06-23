@@ -427,6 +427,7 @@ AssistantObject::Check(void)
 	else if ("deepseek" == m_mWord)
 	{
 		Typing(AskDeepSeek(m_input));
+		WaitOut();
 	}
 	else
 	{
@@ -463,17 +464,7 @@ AssistantObject::Settings(void)
         "4.speak pitch(0-99)",
         "5.typing speed(in ms)",
         "Example 1:",
-        "Duc 160 100 40 40",
-        "8. movie (moviename)",
-        "9. what/how/where/who/why (question)",
-        "10. cmd (cmd commands)",
-        "11. find my ip",
-        "12. play (song name)",
-        "13. list songs",
-        "14. exit/quit/q",
-        "15. shutdown/restart",
-        "16. install",
-        "17. note"
+        "Duc 160 100 40 40"
     };
 
     werase(m_win);           
@@ -789,7 +780,8 @@ AssistantObject::Help(void)
         "14. exit/quit/q",
         "15. shutdown/restart",
         "16. install",
-        "17. note"
+        "17. note",
+        "18. deepseek question"
     };
 
     werase(m_win);           
@@ -801,6 +793,7 @@ AssistantObject::Help(void)
     }
 
     wrefresh(m_win);
+    WaitOut();
 }
 
 char 
@@ -822,14 +815,16 @@ AssistantObject::WaitOut(void)
 {
 	char wait;
 
-	do {
+	do 
+	{
 		wait = GetHiddenInput();
 	    usleep(T_CONST * 100);
 	} while (wait != QUIT_KEY);
 }
 
 std::string 
-AssistantObject::AskDeepSeek(const std::string& user_input) {
+AssistantObject::AskDeepSeek(const std::string& user_input) 
+{
     std::ofstream req("request.json");
     req << R"({
         "model": "deepseek/deepseek-chat",
@@ -846,14 +841,14 @@ AssistantObject::AskDeepSeek(const std::string& user_input) {
                       "-d @request.json > response.json";
 
     system(cmd.c_str());
-
     std::ifstream res("response.json");
     std::ostringstream ss;
     ss << res.rdbuf();
     std::string json = ss.str();
-
     size_t pos = json.find("\"content\":\"");
-    if (pos != std::string::npos) {
+
+    if (pos != std::string::npos) 
+    {
         pos += 11;
         size_t end = json.find("\"", pos);
         std::string content = json.substr(pos, end - pos);
