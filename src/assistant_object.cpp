@@ -735,27 +735,40 @@ void
 AssistantObject::Help(void)
 {
 	m_count = 0;
-	//std::cout << "-----------------------------\n";
-	//std::cout << "           Commands          \n";
-	//std::cout << "-----------------------------\n";
-	//std::cout << "    1.search (any question)  \n";
-	//std::cout << "    2.open (google,mozilla)  \n";
-	//std::cout << "    3.block (website name)   \n";
-	//std::cout << "    4.song (song name)       \n";
-	//std::cout << "    5.update                 \n";
-	//std::cout << "    6.watch (videoname)      \n";
-	//std::cout << "    7.pdf (pdfname)          \n";
-	//std::cout << "    8.movie (moviename)      \n";
-	//std::cout << "    9.what/how/where/who/why (question)\n";
-	//std::cout << "   10.cmd (cmd commands)     \n";
-	//std::cout << "   11.find my ip             \n";
-	//std::cout << "   12.play (song name)       \n";
-	//std::cout << "   13.list songs             \n";
-	//std::cout << "   10.exit/quit/q            \n";
-	//std::cout << "   11.shutdown/restart       \n";
-	//std::cout << "   12.install                \n";
-	//std::cout << "   13.note                   \n";
-	//WaitOut();
+	int i = 4;
+	mvwprintw(m_win, i, 10, "1.search (any question)");
+	i++;
+	mvwprintw(m_win, i, 10, "2.open (google,mozilla)");
+	i++;
+	mvwprintw(m_win, i, 10, "3.block (website name)");
+	i++;
+	mvwprintw(m_win, i, 10, "4.song (song name)");
+	i++;
+	mvwprintw(m_win, i, 10, "5.update");
+	i++;
+	mvwprintw(m_win, i, 10, "6.watch (videoname)");
+	i++;
+	mvwprintw(m_win, i, 10, "7.pdf (pdfname)");
+	i++;
+	mvwprintw(m_win, i, 10, "8.movie (moviename)");
+	i++;
+	mvwprintw(m_win, i, 10, "9.what/how/where/who/why (question)");
+	i++;
+	mvwprintw(m_win, i, 10, "10.cmd (cmd commands)");
+	i++;
+	mvwprintw(m_win, i, 10, "11.find my ip");
+	i++;
+	mvwprintw(m_win, i, 10, "12.play (song name)");
+	i++;
+	mvwprintw(m_win, i, 10, "13.list songs");
+	i++;
+	mvwprintw(m_win, i, 10, "14.exit/quit/q");
+	i++;
+	mvwprintw(m_win, i, 10, "15.shutdown/restart");
+	i++;
+	mvwprintw(m_win, i, 10, "16.install");
+	i++;
+	mvwprintw(m_win, i, 10, "17.note");
 }
 
 char 

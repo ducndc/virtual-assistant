@@ -29,7 +29,7 @@
 #define XDG_OPEN_CMD		"xdg-open "
 #define SHUTDOWN_CMD		"shutdown "
 #define RESTART_CMD			"restart "
-#define CHORME_CMD			"chrome "
+#define CHORME_CMD			"google-chrome "
 #define FIREFOX_CMD			"firefox"
 #define IFCONFIG_CMD		"ifconfig > /dev/null 2>&1"
 #define NULL_OUTPUT			"> /dev/null 2>&1"
