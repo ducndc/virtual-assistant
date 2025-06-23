@@ -327,15 +327,15 @@ AssistantObject::Check(void)
 			SearchKeyWord(m_input);
         }
     }
-	else if (("settings" == m_input) || ("setting" == m_input) || ("set" == m_input))
+	else if ((SETTING_STR == m_input) || (SETTING_STR_1 == m_input) || (SETTING_STR_2 == m_input))
 	{	
         Settings();
     }
-	else if (("song" == m_mWord) || ("music" == m_mWord))
+	else if ((SONG_STR == m_mWord) || (MUSIC_STR == m_mWord))
 	{	
-        SearchKeyWord(m_sWord, "song");
+        SearchKeyWord(m_sWord, SONG_STR);
     }
-	else if ("install" == m_input)
+	else if (INSTALL_STR == m_input)
 	{
 		system(MAKE_DIR_CMD "My_beat");
 		Install("hindi");
@@ -347,55 +347,54 @@ AssistantObject::Check(void)
 		Typing("\nAll files are installed");
 		usleep(T_CONST * 300);
 	}
-	else if ("help" == m_input)
+	else if (HELP_STR == m_input)
 	{	
         Help();
     }
-	else if ("movie" == m_mWord)
+	else if (MOVIE_STR == m_mWord)
 	{	
-        SearchKeyWord(m_sWord, "movie");
+        SearchKeyWord(m_sWord, MOVIE_STR);
     }
-    else if ("pdf" == m_mWord)
+    else if (PDF_STR == m_mWord)
 	{	
-        SearchKeyWord(m_sWord, "pdf");
+        SearchKeyWord(m_sWord, PDF_STR);
     }
-    else if ("search" == m_mWord)
+    else if (SEARCH_STR == m_mWord)
 	{	
         SearchKeyWord(m_sWord);
     }
-    else if ("cmd" == m_mWord)
+    else if (CMD_STR == m_mWord)
 	{	
         system(m_sWord.c_str());
     }
-    else if (("start hacking" == m_input) || ("hacking lab" == m_input) || 
-    	("hackingzone" == m_input) || ("hacking tools" == m_input) || ("hack" == m_mWord))
+    else if (HACK_STR == m_mWord)
 	{
 		Hacking();
 	}
-	else if ("list" == m_mWord)
+	else if (LIST_STR == m_mWord)
 	{
-		if (("all songs" == m_sWord) || ("songs" == m_sWord))
+		if ((ALL_SONG_STR == m_sWord) || (SONGS_STR == m_sWord))
 			ShowSongLists(SONG_FILE_PATH);
 	}
-	else if ("block" == m_mWord)
+	else if (BLOCK_STR == m_mWord)
 	{
 		BlockWebsite(m_sWord);
 	}
-	else if ("note" == m_mWord)
+	else if (NOTE_STR == m_mWord)
 	{
 		Note();
 	}
-	else if (("yt" == m_mWord) || ("youtube" == m_mWord) || ("watch" == m_mWord))
+	else if ((YOUTUBE_STR == m_mWord) || (WATCH_STR == m_mWord))
 	{
-		SearchKeyWord(m_sWord, "youtube");
+		SearchKeyWord(m_sWord, YOUTUBE_STR);
 	}
-	else if ("open" == m_mWord)
+	else if (OPEN_STR == m_mWord)
 	{
-		if (("chrome" == m_sWord) || ("google chrome" == m_sWord))
+		if ((CHORME_STR == m_sWord) || (GOOGLE_CHORME_STR == m_sWord))
 		{
 			system(CHORME_CMD);
 		}
-		else if (("mozilla" == m_sWord) || ("firefox" == m_sWord))
+		else if ((MOZILLA_STR == m_sWord) || (FIREFOX_STR == m_sWord))
 		{
 			system(FIREFOX_CMD);
 		}
@@ -419,7 +418,6 @@ AssistantObject::Check(void)
 	}
 
 	usleep(T_CONST * 700);
-	//Repeat();
 }
 
 void 
@@ -427,18 +425,40 @@ AssistantObject::Settings(void)
 {
 	std::string un;
 	int ss, sa, sp, ts;
-	//std::cout << "\n\n";
-	Typing("Enter data in the following given format:\n");
-	//std::cout << "\n1.user name(single word only)";
-	//std::cout << "\n2.speak speed(in WPM)";
-	//std::cout << "\n3.speak volume(0-200)";
-	//std::cout << "\n4.speak pitch(0-99)";
-	//std::cout << "\n5.typing speed(in ms)";
-	//std::cout << "\n\nExample 1:\n";
-	//std::cout << "Duc 160 100 40 40";
-	//std::cout << "\n\nExample 2:\n";
-	//std::cout << "Duc 150 120 60 30";
-	//std::cout << "\n\n\n---> ";
+
+    m_count = 0;
+    int row = 4;
+    std::vector<std::string> commands = {
+    	"Enter data in the following given format:",
+        "1.user name(single word only)",
+        "2.speak speed(in WPM)",
+        "3.speak volume(0-200)",
+        "4.speak pitch(0-99)",
+        "5.typing speed(in ms)",
+        "Example 1:",
+        "Duc 160 100 40 40",
+        "8. movie (moviename)",
+        "9. what/how/where/who/why (question)",
+        "10. cmd (cmd commands)",
+        "11. find my ip",
+        "12. play (song name)",
+        "13. list songs",
+        "14. exit/quit/q",
+        "15. shutdown/restart",
+        "16. install",
+        "17. note"
+    };
+
+    werase(m_win);           
+    box(m_win, 0, 0);        
+
+    for (const auto& cmd : commands) 
+    {
+        mvwprintw(m_win, row++, 10, "%s", cmd.c_str());
+    }
+
+    wrefresh(m_win);
+
 	std::cin >> un >> ss >> sa >> sp >> ts;
 
 	if ((sa <= 200 && sa > 0) && (sp <= 99 && sp > 0 ))
@@ -632,9 +652,10 @@ AssistantObject::Install(
 	std::string fold)
 {
 	std::fstream file;
-	std::string foldname, filename;
-	foldname = MAKE_DIR_CMD MY_BEAT_FOLDER;
+	std::string foldname;
+	std::string filename;
 
+	foldname = MAKE_DIR_CMD MY_BEAT_FOLDER;
 	foldname += fold;
 	system(std::string(foldname).c_str());
 	filename = MY_BEAT_FOLDER;
@@ -676,26 +697,7 @@ AssistantObject::Hacking(void)
 {
 	
 	Speak("You are Welcome in the Hacking Lab");
-	//std::cout << std::setfill(' ') << std::setw(50) << "      ________       \n";
-	usleep(T_CONST * 100);
-	//std::cout << std::setfill(' ') << std::setw(50) << "     |        |      \n";
-	usleep(T_CONST * 100);
-	//std::cout << std::setfill(' ') << std::setw(50) << "     |  #   # |      \n";
-	usleep(T_CONST * 100);
-	//std::cout << std::setfill(' ') << std::setw(50) << "     |  #   # |      \n";
-	usleep(T_CONST * 100);
-	//std::cout << std::setfill(' ') << std::setw(50) << "     |   # #  |      \n";
-	usleep(T_CONST * 100);
-	//std::cout << std::setfill(' ') << std::setw(50) << "     |    #   |      \n";
-	usleep(T_CONST * 100);
-	//std::cout << std::setfill(' ') << std::setw(50) << "     |________|      \n";
-	
-	usleep(T_CONST * 1000);
-	//std::cout << std::setfill(' ') << std::setw(50) << " Duc Hacking Lab  \n";
-	usleep(T_CONST * 1000);
-	
 	Typing("Still in development...");
-	//WaitOut();
 }
 
 void 
@@ -771,7 +773,7 @@ AssistantObject::Help(void)
         mvwprintw(m_win, row++, 10, "%s", cmd.c_str());
     }
 
-    wrefresh(m_win);         // Cập nhật hiển thị
+    wrefresh(m_win);
 }
 
 char 
