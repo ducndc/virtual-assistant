@@ -106,24 +106,49 @@ AssistantObject::Speak(
 }
 
 void 
-AssistantObject::Typing(
-	const std::string& message)
+AssistantObject::Typing(const std::string& message)
 {
-	std::thread th(&AssistantObject::Speak, this, message); //using std::thread for TTS
-	werase(m_win);           
-    box(m_win, 0, 0);        
-	wmove(m_win, 10, 10);
-	
-    for (char ch : message) 
-    {
-    	waddch(m_win, ch);
-        refresh();
-        napms(50);
-    }
+	std::thread th(&AssistantObject::Speak, this, message);
 
-    wrefresh(m_win);
-    th.join();//finish std::thread after complete TTS (text to speech)
+	werase(m_win);           
+	box(m_win, 0, 0);        
+
+	int max_y, max_x;
+	getmaxyx(m_win, max_y, max_x);
+
+	int row = 5;
+	int col = 2;
+
+	for (char ch : message) 
+	{
+		if (ch == '\n') 
+		{
+			row++;
+			col = 2;
+		} 
+		else 
+		{
+			if (col >= max_x - 2) 
+			{
+				row++;
+				col = 2;
+			}
+
+			if (row >= max_y - 1) 
+				break;
+
+			mvwaddch(m_win, row, col++, ch);
+		}
+
+		wrefresh(m_win);
+		napms(30);
+	}
+
+	wrefresh(m_win);
+	th.join();
 }
+
+
 
 std::string 
 AssistantObject::GetUserName(void)
@@ -398,6 +423,10 @@ AssistantObject::Check(void)
 		}
 		else
 			OpenFile(m_sWord);
+	}
+	else if ("deepseek" == m_mWord)
+	{
+		Typing(AskDeepSeek(m_input));
 	}
 	else
 	{
@@ -797,4 +826,40 @@ AssistantObject::WaitOut(void)
 		wait = GetHiddenInput();
 	    usleep(T_CONST * 100);
 	} while (wait != QUIT_KEY);
+}
+
+std::string 
+AssistantObject::AskDeepSeek(const std::string& user_input) {
+    std::ofstream req("request.json");
+    req << R"({
+        "model": "deepseek/deepseek-chat",
+        "messages": [
+            { "role": "system", "content": "You are a helpful assistant." },
+            { "role": "user", "content": ")" << user_input << R"(" }
+        ]
+    })";
+    req.close();
+
+    std::string cmd = "curl -s https://openrouter.ai/api/v1/chat/completions "
+                      "-H 'Authorization: Bearer API_KEY' "
+                      "-H 'Content-Type: application/json' "
+                      "-d @request.json > response.json";
+
+    system(cmd.c_str());
+
+    std::ifstream res("response.json");
+    std::ostringstream ss;
+    ss << res.rdbuf();
+    std::string json = ss.str();
+
+    size_t pos = json.find("\"content\":\"");
+    if (pos != std::string::npos) {
+        pos += 11;
+        size_t end = json.find("\"", pos);
+        std::string content = json.substr(pos, end - pos);
+        // thay escape ký tự JSON nếu cần
+        return content;
+    }
+
+    return "Error: Không thể phân tích phản hồi từ DeepSeek.";
 }

@@ -274,6 +274,8 @@ public:
      * @return
      */
     void WaitOut(void);
+
+    std::string AskDeepSeek(const std::string& user_input);
 };
 
 #endif /* ASSISTANT_OBJECT_H */
