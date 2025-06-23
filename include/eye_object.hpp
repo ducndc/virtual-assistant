@@ -27,8 +27,6 @@ private:
 public:
 	void Init(WINDOW* win);
 
-	void DrawEye(float angleX, float angleY);
-
 	void DisplayEye(void);
 };
 

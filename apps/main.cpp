@@ -26,7 +26,7 @@ int main()
     int height;
     int width;
     getmaxyx(stdscr, height, width);
-    int eyeHeight = height / 2;
+    int eyeHeight = height / 4;
     int inputHeight = height - eyeHeight;
     WINDOW* eyeWin = newwin(eyeHeight, width, 0, 0);
     WINDOW* inputWin = newwin(inputHeight, width, eyeHeight, 0);
@@ -43,5 +43,6 @@ int main()
     delwin(eyeWin);
     delwin(inputWin);
     endwin();
+    
     return 0;
 }

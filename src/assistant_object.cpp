@@ -93,13 +93,10 @@ AssistantObject::Speak(
 	std::string s)
 {
     std::string cmd = ESPEAK_CMD;
-    // volume: dùng option -a (0-200)
     cmd += " -a";
     cmd += std::to_string(m_volumeOfAssistant);
-    // pitch: option -p (0-99)
     cmd += " -p";
     cmd += std::to_string(m_pithOfAssistant);
-    // speed: option -s (80-450)
     cmd += " -s";
     cmd += std::to_string(m_speedOfAssistant);
     cmd += " \"";
@@ -117,14 +114,14 @@ AssistantObject::Typing(
     box(m_win, 0, 0);        
 	wmove(m_win, 10, 10);
 	
-    for (char ch : message) {
+    for (char ch : message) 
+    {
     	waddch(m_win, ch);
         refresh();
         napms(50);
     }
 
     wrefresh(m_win);
-
     th.join();//finish std::thread after complete TTS (text to speech)
 }
 
@@ -195,6 +192,7 @@ AssistantObject::Repeat(void)
 
     while (g_running) 
     {
+    	werase(m_win);
         box(m_win, 0, 0);
         mvwprintw(m_win, 0, 2, NAME_PROGRAM VERSION);
         LocalClock();
@@ -203,7 +201,6 @@ AssistantObject::Repeat(void)
 		mvwhline(m_win, input_row, 1, ' ', max_x - 2);
 		mvwprintw(m_win, input_row, 2, LOG_SYMBOL INPUT_SYMBOL);
 		wmove(m_win, input_row, 4);
-		wrefresh(m_win);
 		int ch;
 
 		if (m_terminate)
@@ -240,8 +237,9 @@ AssistantObject::Repeat(void)
         m_mWord = m_input.substr(0, m_pos);
         m_lPos = m_input.find('\0');
         m_sWord = m_input.substr(m_pos + 1, m_lPos);
-        refresh();
         Check();
+        wrefresh(m_win);
+        std::this_thread::sleep_for(std::chrono::milliseconds(30));
     }
 
     if (m_terminate)
