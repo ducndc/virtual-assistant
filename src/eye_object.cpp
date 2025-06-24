@@ -60,43 +60,43 @@ EyeObject::DisplayEye(void)
             total = user + nice + system + idle + irq + softirq;
         }
 
-        float cpu_percent = 0;
+        float cpuPercent = 0;
         long deltaTotal = total - prevTotal;
         long deltaIdle = idle - prevIdle;
 
         if (deltaTotal > 0)
-            cpu_percent = 100.0f * (deltaTotal - deltaIdle) / deltaTotal;
+            cpuPercent = 100.0f * (deltaTotal - deltaIdle) / deltaTotal;
 
         prevIdle = idle;
         prevTotal = total;
-        float ram_used = info.totalram - info.freeram;
-        float ram_percent = (ram_used / info.totalram) * 100.0f;
+        float ramUsed = info.totalram - info.freeram;
+        float ramPercent = (ramUsed / info.totalram) * 100.0f;
         struct statvfs disk;
-        float disk_percent = 0;
+        float diskPercent = 0;
 
         if (statvfs("/", &disk) == 0) 
         {
             unsigned long total = disk.f_blocks * disk.f_frsize;
             unsigned long free = disk.f_bfree * disk.f_frsize;
-            disk_percent = 100.0f * (total - free) / total;
+            diskPercent = 100.0f * (total - free) / total;
         }
 
-        float battery_percent = -1.0f;
+        float batteryPercent = -1.0f;
         std::ifstream bat("/sys/class/power_supply/BAT0/capacity");
 
         if (bat.is_open()) 
         {
             int val;
             bat >> val;
-            battery_percent = static_cast<float>(val);
+            batteryPercent = static_cast<float>(val);
         }
 
-        int uptime_minutes = info.uptime / 60;
-        int uptime_hours = uptime_minutes / 60;
-        uptime_minutes %= 60;
+        int uptimeMinutes = info.uptime / 60;
+        int uptimeHours = uptimeMinutes / 60;
+        uptimeMinutes %= 60;
         float loadavg1 = info.loads[0] / 65536.0;
 
-        auto draw_bar = [&](int row, const std::string& label, float percent, int color_threshold) 
+        auto DrawBar = [&](int row, const std::string& label, float percent, int colorThreshold) 
         {
             int barWidth = m_width - 20;
             int filled = (int)((percent / 100.0f) * barWidth);
@@ -104,7 +104,7 @@ EyeObject::DisplayEye(void)
 
             if (has_colors()) 
             {
-                if (percent > color_threshold) 
+                if (percent > colorThreshold) 
                     wattron(m_win, COLOR_PAIR(3));
                 else if (percent > 70) 
                     wattron(m_win, COLOR_PAIR(2));
@@ -123,17 +123,17 @@ EyeObject::DisplayEye(void)
             wprintw(m_win, " %3.0f%%", percent);
         };
 
-        draw_bar(2, "CPU", cpu_percent, 85);
-        draw_bar(3, "RAM", ram_percent, 80);
-        draw_bar(4, "DISK", disk_percent, 90);
+        DrawBar(2, "CPU", cpuPercent, 85);
+        DrawBar(3, "RAM", ramPercent, 80);
+        DrawBar(4, "DISK", diskPercent, 90);
 
-        if (battery_percent >= 0)
-            draw_bar(5, "BATTERY", battery_percent, 30);
+        if (batteryPercent >= 0)
+            DrawBar(5, "BATTERY", batteryPercent, 30);
 
         wattron(m_win, A_BOLD);
         mvwprintw(m_win, m_height - 2, 2,
                   "Uptime: %dh %02dm   Load avg: %.2f   PID: %d",
-                  uptime_hours, uptime_minutes, loadavg1, getpid());
+                  uptimeHours, uptimeMinutes, loadavg1, getpid());
         wattroff(m_win, A_BOLD);
         wrefresh(m_win);
         std::this_thread::sleep_for(std::chrono::milliseconds(500));

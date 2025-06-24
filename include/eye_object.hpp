@@ -14,13 +14,8 @@
 
 class EyeObject {
 private:
-	const char *m_pShades;
-	
 	int m_width; 
 	int m_height;  
-	
-    float m_angle;
-    float m_radius;
 
     WINDOW* m_win;
 
