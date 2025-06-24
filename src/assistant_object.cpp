@@ -23,7 +23,6 @@ AssistantObject::Init(WINDOW* win)
 {
 	m_win = win;
 	m_terminate = false;
-    box(m_win, 0, 0);
     mvwprintw(m_win, 0, 2, VERSION);
     wrefresh(m_win);
 	LoadSetting();
@@ -109,13 +108,9 @@ void
 AssistantObject::Typing(const std::string& message)
 {
 	std::thread th(&AssistantObject::Speak, this, message);
-
 	werase(m_win);           
-	box(m_win, 0, 0);        
-
 	int max_y, max_x;
 	getmaxyx(m_win, max_y, max_x);
-
 	int row = 5;
 	int col = 2;
 
@@ -218,7 +213,7 @@ AssistantObject::Repeat(void)
     while (g_running) 
     {
     	werase(m_win);
-        box(m_win, 0, 0);
+        
         mvwprintw(m_win, 0, 2, NAME_PROGRAM VERSION);
         LocalClock();
 		char input[128] = {0};
@@ -468,7 +463,7 @@ AssistantObject::Settings(void)
     };
 
     werase(m_win);           
-    box(m_win, 0, 0);        
+            
 
     for (const auto& cmd : commands) 
     {
@@ -672,7 +667,6 @@ AssistantObject::Install(
 	std::fstream file;
 	std::string foldname;
 	std::string filename;
-
 	foldname = MAKE_DIR_CMD MY_BEAT_FOLDER;
 	foldname += fold;
 	system(std::string(foldname).c_str());
@@ -784,8 +778,7 @@ AssistantObject::Help(void)
         "18. deepseek question"
     };
 
-    werase(m_win);           
-    box(m_win, 0, 0);        
+    werase(m_win);                   
 
     for (const auto& cmd : commands) 
     {
