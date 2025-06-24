@@ -96,6 +96,7 @@
 #define GOOGLE_CHORME_STR	"google chrome"
 #define MOZILLA_STR			"mozilla"
 #define FIREFOX_STR			"firefox"
+#define ASK_AI				"ask"
 
 #define CURL_OLLAMA			"curl -s http://localhost:11434/api/generate "
 #define CONTENT_OLLAMA		"-H \"Content-Type: application/json\" "

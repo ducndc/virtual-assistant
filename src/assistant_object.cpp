@@ -424,7 +424,7 @@ AssistantObject::Check(void)
 		else
 			OpenFile(m_sWord);
 	}
-	else if ("ask" == m_mWord)
+	else if (ASK_AI == m_mWord)
 	{
 		Typing(AskOllama(m_input));
 		WaitOut();
