@@ -8,6 +8,7 @@ The requirements are:
 - The espeak, mbrola, mbrola-us1 libararies 
 - Git
 - Doxygen (optional)
+- Ollama
 
 To configure:
 

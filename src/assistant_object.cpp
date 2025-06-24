@@ -424,9 +424,9 @@ AssistantObject::Check(void)
 		else
 			OpenFile(m_sWord);
 	}
-	else if ("deepseek" == m_mWord)
+	else if ("ask" == m_mWord)
 	{
-		Typing(AskDeepSeek(m_input));
+		Typing(AskOllama(m_input));
 		WaitOut();
 	}
 	else
@@ -823,7 +823,8 @@ AssistantObject::WaitOut(void)
 }
 
 std::string 
-AssistantObject::AskDeepSeek(const std::string& user_input) 
+AssistantObject::AskDeepSeek(
+	const std::string& user_input) 
 {
     std::ofstream req("request.json");
     req << R"({
@@ -852,9 +853,51 @@ AssistantObject::AskDeepSeek(const std::string& user_input)
         pos += 11;
         size_t end = json.find("\"", pos);
         std::string content = json.substr(pos, end - pos);
-        // thay escape ký tự JSON nếu cần
         return content;
     }
 
-    return "Error: Không thể phân tích phản hồi từ DeepSeek.";
+    return "I do not know!";
+}
+
+std::string 
+AssistantObject::AskOllama(
+	const std::string& user_input) 
+{
+    std::string cmd = CURL_OLLAMA CONTENT_OLLAMA LOAD_MODEL + user_input + END_LOAD_MODEL;
+    FILE* fp = popen(cmd.c_str(), "r");
+
+    if (!fp) 
+    	return "Error: Failed to call Ollama.";
+
+    char buffer[1024];
+    std::ostringstream oss;
+
+    while (fgets(buffer, sizeof(buffer), fp)) 
+    {
+        std::string line = buffer;
+        std::size_t pos = line.find("\"response\":\"");
+
+        if (pos != std::string::npos) 
+        {
+            pos += 12; 
+            std::size_t end = line.find("\"", pos);
+            std::string part = line.substr(pos, end - pos);
+            size_t p = 0;
+
+            while ((p = part.find("\\n", p)) != std::string::npos) 
+            {
+                part.replace(p, 2, "\n");
+            }
+
+            while ((p = part.find("\\\"", p)) != std::string::npos) 
+            {
+                part.replace(p, 2, "\"");
+            }
+
+            oss << part;
+        }
+    }
+
+    pclose(fp);
+    return oss.str();
 }

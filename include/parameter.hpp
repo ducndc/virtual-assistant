@@ -28,7 +28,7 @@
 #define VIM_CMD				"gnome-terminal -- bash -c 'vim " NOTE_FILE_PATH "; exec bash' "
 #define XDG_OPEN_CMD		"xdg-open "
 #define SHUTDOWN_CMD		"shutdown "
-#define RESTART_CMD			"restart "
+#define RESTART_CMD			"reboot "
 #define CHORME_CMD			"google-chrome "
 #define FIREFOX_CMD			"firefox"
 #define IFCONFIG_CMD		"ifconfig > /dev/null 2>&1"
@@ -96,5 +96,11 @@
 #define GOOGLE_CHORME_STR	"google chrome"
 #define MOZILLA_STR			"mozilla"
 #define FIREFOX_STR			"firefox"
+
+#define CURL_OLLAMA			"curl -s http://localhost:11434/api/generate "
+#define CONTENT_OLLAMA		"-H \"Content-Type: application/json\" "
+#define MODE_AI				"gemma:2b"
+#define LOAD_MODEL			"-d '{\"model\": \"" MODE_AI "\", \"prompt\": \"" 
+#define END_LOAD_MODEL		"\"}'"
 
 #endif /* PARAMATER_H */
