@@ -100,7 +100,7 @@
 
 #define CURL_OLLAMA			"curl -s http://localhost:11434/api/generate "
 #define CONTENT_OLLAMA		"-H \"Content-Type: application/json\" "
-#define MODE_AI				"gemma:2b"
+#define MODE_AI				"tinyllama"
 #define LOAD_MODEL			"-d '{\"model\": \"" MODE_AI "\", \"prompt\": \"" 
 #define END_LOAD_MODEL		"\"}'"
 
