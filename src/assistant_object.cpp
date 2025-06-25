@@ -105,14 +105,20 @@ AssistantObject::Speak(
 }
 
 void 
-AssistantObject::Typing(const std::string& message)
+AssistantObject::Typing(
+	const std::string& message, bool enableVoice)
 {
-	std::thread th(&AssistantObject::Speak, this, message);
+	std::thread th;
+
+	if (enableVoice)
+		th = std::thread(&AssistantObject::Speak, this, message);
+
 	werase(m_win);           
 	int max_y, max_x;
 	getmaxyx(m_win, max_y, max_x);
 	int row = 5;
 	int col = 2;
+	scrollok(m_win, TRUE);
 
 	for (char ch : message) 
 	{
@@ -130,7 +136,11 @@ AssistantObject::Typing(const std::string& message)
 			}
 
 			if (row >= max_y - 1) 
-				break;
+			{
+				wmove(m_win, max_y - 1, 0);
+				wscrl(m_win, 1);
+				row = max_y - 2; 
+			}
 
 			mvwaddch(m_win, row, col++, ch);
 		}
@@ -140,7 +150,9 @@ AssistantObject::Typing(const std::string& message)
 	}
 
 	wrefresh(m_win);
-	th.join();
+
+	if (enableVoice)
+		th.join();
 }
 
 
@@ -272,7 +284,7 @@ AssistantObject::Check(void)
 	if ((HI_STR == m_mWord) || (HEY_STR == m_mWord) || 
 		(HELLO_STR == m_mWord) || (HLO_STR == m_mWord))
 	{
-		Typing("Hi " + m_userName + ", how can I help you..");
+		Typing("Hi " + m_userName + ", how can I help you..", true);
 	}
 	else if (PLAY_STR == m_mWord)
 	{
@@ -288,9 +300,9 @@ AssistantObject::Check(void)
 	}
 	else if ((UPDATE_STR == m_mWord) || (UPDATING_STR == m_mWord))
 	{
-		Typing("Updating the song list...");
+		Typing("Updating the song list...", true);
 		usleep(T_CONST * 100);
-		Typing("Please wait");
+		Typing("Please wait", true);
 		UpdateSong("punjabi");
 		UpdateSong("english");
 		UpdateSong("hindi");
@@ -298,25 +310,25 @@ AssistantObject::Check(void)
 		remove("data/songs.txt");
 		rename(TEMP_FILE_PATH, "data/songs.txt");
 		
-		Typing("All songs are updated in the file");
+		Typing("All songs are updated in the file", true);
 	}
 	else if ((EXIT_STR == m_input) || (Q_STR == m_input) || (QUIT_STR == m_input))
 	{
 		Speak("Good bye," + m_userName);
 		usleep(T_CONST * 600);
-		Typing("Created By : " AUTHOR);
+		Typing("Created By : " AUTHOR, true);
 		usleep(T_CONST * 1000);
 		m_terminate = true;
 	}
 	else if ((FIND_IP_STR == m_input) || (FIND_MY_IP_STR == m_input) || (IP_STR == m_mWord))
 	{
-		Typing("Finding your IP address");
+		Typing("Finding your IP address", true);
 		system(IFCONFIG_CMD);
 	}
 	else if ((SHUTDOWN_STR == m_mWord) || (RESTART_STR == m_mWord))
 	{
-		Typing("Your Pc will ");
-		Typing(m_mWord);
+		Typing("Your Pc will ", true);
+		Typing(m_mWord, true);
 		ShutdownTimer(5);
 		Speak("Now , I am going to sleep");
 		if (SHUTDOWN_STR == m_mWord)
@@ -332,13 +344,13 @@ AssistantObject::Check(void)
 	{
 		if (m_input == "what is your name")
 		{
-			Typing("My name is VA.");
+			Typing("My name is VA.", true);
 		}
 		else if (("who are you?" == m_input) || 
 			("who created you?" == m_input) || 
 			("who made you?" == m_input))
 		{
-			Typing("I am VA, a virtual assistant, I was created on 16 June ,2023");
+			Typing("I am VA, a virtual assistant, I was created on 16 June ,2023", true);
 		}
 		else
         {
@@ -362,7 +374,7 @@ AssistantObject::Check(void)
 		Install("others");
 		usleep(T_CONST * 200);
 		usleep(T_CONST * 200);
-		Typing("\nAll files are installed");
+		Typing("\nAll files are installed", true);
 		usleep(T_CONST * 300);
 	}
 	else if (HELP_STR == m_input)
@@ -421,7 +433,7 @@ AssistantObject::Check(void)
 	}
 	else if (ASK_AI == m_mWord)
 	{
-		Typing(AskOllama(m_input));
+		Typing(AskOllama(m_input), false);
 		WaitOut();
 	}
 	else
@@ -477,7 +489,7 @@ AssistantObject::Settings(void)
 	if ((sa <= 200 && sa > 0) && (sp <= 99 && sp > 0 ))
 	{
 		SaveSettings(un, ss, sa, sp, ts);
-		Typing("Restart me to see changes");
+		Typing("Restart me to see changes", true);
 	}
 	else
 	{
@@ -503,9 +515,9 @@ AssistantObject::PlaySong(
 	{
 		if (song == item)
 		{
-			Typing("Playing the song ");
+			Typing("Playing the song ", true);
 			usleep(T_CONST * 150);
-			Typing(song_name);
+			Typing(song_name, true);
 			strcat(path, singer);
 			strcat(path, "/");
 			strcat(path, song);
@@ -520,8 +532,8 @@ AssistantObject::PlaySong(
 
 	if (song != item)
 	{
-		Typing(song_name);
-		Typing(" not found.");
+		Typing(song_name, true);
+		Typing(" not found.", true);
 
 		if (m_sCount % 3 == 0)
 		{
@@ -530,8 +542,8 @@ AssistantObject::PlaySong(
 			Speak("But you can download the song by using the command");
 			usleep(T_CONST * 1300);
 			
-			Typing("song ");
-			Typing(song_name);
+			Typing("song ", true);
+			Typing(song_name, true);
 		}
 
 		m_sCount++;
@@ -613,16 +625,16 @@ AssistantObject::SearchKeyWord(
 	}
 
 	usleep(T_CONST * 200);
-	Typing("Cheking internet connection...");
+	Typing("Cheking internet connection...", true);
 
 	if (m_sCount % 5 == 0)
 	{
 		
 		usleep(T_CONST * 90);
-		Typing("Colleting information...");
+		Typing("Colleting information...", true);
 		usleep(T_CONST * 50);
 		system(IFCONFIG_CMD);
-		Typing("All protocols are secured...");
+		Typing("All protocols are secured...", true);
 	}
 
 	usleep(T_CONST * 250);
@@ -709,7 +721,7 @@ AssistantObject::Hacking(void)
 {
 	
 	Speak("You are Welcome in the Hacking Lab");
-	Typing("Still in development...");
+	Typing("Still in development...", true);
 }
 
 void 
@@ -719,7 +731,7 @@ AssistantObject::BlockWebsite(
 	std::fstream file;
 	file.open("echo", std::ios::app);
 	file << "\n127.0.0.2 www." << website;
-	Typing("Blocking the website..");
+	Typing("Blocking the website..", true);
 	file.close();
 }
 
@@ -747,8 +759,8 @@ AssistantObject::OpenFile(
 	std::string path = XDG_OPEN_CMD, item = location;
 	ConvertSpaceToUnderscore(item);
 	path += item;
-	Typing("Open....");
-	Typing(location);
+	Typing("Open....", true);
+	Typing(location, true);
 	system(std::string(path).c_str());
 }
 

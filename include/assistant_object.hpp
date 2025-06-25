@@ -91,7 +91,7 @@ public:
      * @param:
      * @return
     */
-    void Typing(const std::string& message);
+    void Typing(const std::string& message, bool enableVoice);
 
     /**
      * Convert text to speech
