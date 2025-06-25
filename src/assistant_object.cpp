@@ -853,6 +853,25 @@ AssistantObject::AskDeepSeek(
 }
 
 std::string 
+AssistantObject::DecodeUnicodeEscapes(
+	const std::string& input) 
+{
+    std::string output = input;
+    size_t pos;
+
+    while ((pos = output.find("\\u003c")) != std::string::npos)
+        output.replace(pos, 6, "<");
+
+    while ((pos = output.find("\\u003e")) != std::string::npos)
+        output.replace(pos, 6, ">");
+
+    while ((pos = output.find("\\u0026")) != std::string::npos)
+        output.replace(pos, 6, "&");
+
+    return output;
+}
+
+std::string 
 AssistantObject::AskOllama(
 	const std::string& user_input) 
 {
@@ -860,7 +879,7 @@ AssistantObject::AskOllama(
     FILE* fp = popen(cmd.c_str(), "r");
 
     if (!fp) 
-    	return "Error: Failed to call Ollama.";
+        return "Error: Failed to call Ollama.";
 
     char buffer[1024];
     std::ostringstream oss;
@@ -877,16 +896,15 @@ AssistantObject::AskOllama(
             std::string part = line.substr(pos, end - pos);
             size_t p = 0;
 
-            while ((p = part.find("\\n", p)) != std::string::npos) 
-            {
+            while ((p = part.find("\\n", p)) != std::string::npos)
                 part.replace(p, 2, "\n");
-            }
 
-            while ((p = part.find("\\\"", p)) != std::string::npos) 
-            {
+            p = 0;
+
+            while ((p = part.find("\\\"", p)) != std::string::npos)
                 part.replace(p, 2, "\"");
-            }
 
+            part = DecodeUnicodeEscapes(part);
             oss << part;
         }
     }

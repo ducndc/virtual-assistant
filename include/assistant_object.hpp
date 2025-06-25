@@ -279,6 +279,7 @@ public:
 
     std::string AskOllama(const std::string& user_input);
 
+    std::string DecodeUnicodeEscapes(const std::string& input);
 };
 
 #endif /* ASSISTANT_OBJECT_H */
