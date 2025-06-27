@@ -1,4 +1,5 @@
 # virtual-assistant
+Author: Chung Duc Nguyen Dang
 This is an project about virtual assistant.
 
 The requirements are:
