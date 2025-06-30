@@ -17,15 +17,15 @@ public:
     std::string m_hash;
 
     Block(int idx, const std::string& d, const std::string& prev)
-        : index(idx), data(d), prevHash(prev)
+        : m_index(idx), m_data(d), m_prevHash(prev)
     {
-        timestamp = currentTime();
-        hash = calculateHash();
+        m_timestamp = currentTime();
+        m_hash = calculateHash();
     }
 
     std::string calculateHash() const {
         std::stringstream ss;
-        ss << index << timestamp << data << prevHash;
+        ss << m_index << m_timestamp << m_data << m_prevHash;
         return sha256(ss.str());
     }
 
@@ -55,7 +55,7 @@ public:
 
     void addLog(const std::string& message) {
         const Block& last = chain.back();
-        chain.emplace_back(last.index + 1, message, last.hash);
+        chain.emplace_back(last.m_index + 1, message, last.m_hash);
     }
 
     bool verify() const {
@@ -63,12 +63,12 @@ public:
             const Block& current = chain[i];
             const Block& previous = chain[i - 1];
 
-            if (current.hash != current.calculateHash()) {
+            if (current.m_hash != current.calculateHash()) {
                 std::cerr << "[!] Hash mismatch at block " << i << "\n";
                 return false;
             }
 
-            if (current.prevHash != previous.hash) {
+            if (current.m_prevHash != previous.m_hash) {
                 std::cerr << "[!] PrevHash mismatch at block " << i << "\n";
                 return false;
             }
@@ -78,11 +78,11 @@ public:
 
     void print() const {
         for (const auto& block : chain) {
-            std::cout << "Block #" << block.index << "\n"
-                      << "  Time: " << block.timestamp << "\n"
-                      << "  Data: " << block.data << "\n"
-                      << "  Hash: " << block.hash << "\n"
-                      << "  Prev: " << block.prevHash << "\n\n";
+            std::cout << "Block #" << block.m_index << "\n"
+                      << "  Time: " << block.m_timestamp << "\n"
+                      << "  Data: " << block.m_data << "\n"
+                      << "  Hash: " << block.m_hash << "\n"
+                      << "  Prev: " << block.m_prevHash << "\n\n";
         }
     }
 
