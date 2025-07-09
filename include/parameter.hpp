@@ -21,6 +21,7 @@
 #define USER_SETTING_FILE	".user-settings"
 
 #define QUIT_KEY    		'q'
+#define ENTER_KEY			'\n'
 
 #define CLEAR_SCREEN_CMD	"clear "
 #define MAKE_DIR_CMD		"mkdir "

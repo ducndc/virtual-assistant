@@ -24,7 +24,7 @@ AssistantObject::Init(
 {
 	m_win = win;
 	m_terminate = false;
-    mvwprintw(m_win, 0, 2, VERSION);
+    mvwprintw(m_win, 0, 2, NAME_PROGRAM VERSION);
     wrefresh(m_win);
 	LoadSetting();
 	LocalClock();
@@ -210,7 +210,7 @@ AssistantObject::LocalClock(void)
 	m_greet += m_userName;
     
     mvwprintw(m_win, 2, 2, LOG_SYMBOL "%s", m_greet.c_str());
-    mvwprintw(m_win, 3, 2, LOG_SYMBOL "Time: %dh%dm %s", 
+    mvwprintw(m_win, 3, 2, LOG_SYMBOL "Time: %d:%d %s", 
     	(l_time->tm_hour <= 12 ? l_time->tm_hour : l_time->tm_hour - 12), 
     	l_time->tm_min, (l_time->tm_hour < 12 ? AM_SYMBOL : PM_SYMBOL));
 }
