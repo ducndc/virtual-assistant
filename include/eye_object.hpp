@@ -2,7 +2,7 @@
  * Author   : Chung Duc Nguyen Dang
  * Email    : nguyendangchungduc1999@gmail.com
  * 
- * eye_object.h
+ * eye_object.hpp
  */
 
 #ifndef EYE_OBJECT_H

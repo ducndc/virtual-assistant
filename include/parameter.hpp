@@ -2,7 +2,7 @@
  * Author   : Chung Duc Nguyen Dang
  * Email    : nguyendangchungduc1999@gmail.com
  * 
- * paramater.h
+ * paramater.hpp
  */
 
 #ifndef PARAMATER_H

@@ -2,7 +2,7 @@
  * Author   : Chung Duc Nguyen Dang
  * Email    : nguyendangchungduc1999@gmail.com
  * 
- * assistant_object.h
+ * assistant_object.hpp
  */
 
 #ifndef ASSISTANT_OBJECT_H

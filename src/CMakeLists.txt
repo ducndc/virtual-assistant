@@ -15,13 +15,16 @@ file(GLOB SOURCE_FILES "../src/*.cpp")
 
 add_library(assistant_object assistant_object.cpp ${HEADER_FILES})
 add_library(eye_object eye_object.cpp ${HEADER_FILES})
+add_library(block_chain block_chain.cpp ${HEADER_FILES})
 
 # We need this directory, and users of our library will need it too
 target_include_directories(assistant_object PUBLIC ../include)
 target_include_directories(eye_object PUBLIC ../include)
+target_include_directories(block_chain PUBLIC ../include)
 
 target_link_libraries(assistant_object ${CURSES_LIBRARIES} pthread)
 target_link_libraries(eye_object ${CURSES_LIBRARIES} pthread)
+target_link_libraries(block_chain)
 
 # This depends on (header only) boost
 #target_link_libraries(modern_library PRIVATE Boost::boost)
@@ -29,6 +32,7 @@ target_link_libraries(eye_object ${CURSES_LIBRARIES} pthread)
 # All users of this library will need at least C++11
 target_compile_features(assistant_object PUBLIC cxx_std_11)
 target_compile_features(eye_object PUBLIC cxx_std_11)
+target_compile_features(block_chain PUBLIC cxx_std_11)
 
 # IDEs should put the headers in a nice place
 source_group(
