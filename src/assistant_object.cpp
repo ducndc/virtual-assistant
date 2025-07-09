@@ -19,7 +19,8 @@
 extern std::atomic<bool> g_running;
 
 void 
-AssistantObject::Init(WINDOW* win)
+AssistantObject::Init(
+	WINDOW* win)
 {
 	m_win = win;
 	m_terminate = false;
@@ -106,7 +107,8 @@ AssistantObject::Speak(
 
 void 
 AssistantObject::Typing(
-	const std::string& message, bool enableVoice)
+	const std::string& message, 
+	bool enableVoice)
 {
 	std::thread th;
 

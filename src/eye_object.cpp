@@ -21,7 +21,8 @@
 extern std::atomic<bool> g_running;
 
 void 
-EyeObject::Init(WINDOW* win)
+EyeObject::Init(
+    WINDOW* win)
 {
     m_win = win;
     int height, width;
